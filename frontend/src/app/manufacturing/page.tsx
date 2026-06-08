@@ -70,23 +70,32 @@ export default function ManufacturingPage() {
   return (
     <div ref={containerRef}>
       {/* Hero — full-bleed image */}
-      <section className="relative flex min-h-[85dvh] items-end overflow-hidden">
+      <section className="relative flex min-h-[100svh] flex-col justify-end overflow-hidden pt-32">
         <Image
           src="/products/sheriff-brown-suede-2.jpg"
           alt="ARCTen leather manufacturing"
           fill
           priority
           sizes="100vw"
-          className="object-cover object-center"
+          className="object-cover object-[center_20%]"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-charcoal/90 via-charcoal/40 to-charcoal/30" />
+        <div className="absolute inset-0 bg-gradient-to-t from-charcoal via-charcoal/45 to-charcoal/20" />
+        <div className="absolute inset-0 bg-gradient-to-r from-charcoal/70 via-charcoal/10 to-transparent" />
+        <div
+          className="pointer-events-none absolute inset-0 opacity-[0.06] mix-blend-overlay"
+          style={{
+            backgroundImage:
+              "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")",
+          }}
+        />
 
-        <div className="container-custom relative z-10 px-4 md:px-8 pb-20 md:pb-28">
+        <div className="container-custom relative z-10 px-4 md:px-8 pb-16 md:pb-24">
           <div className="max-w-3xl">
-            <span className="reveal eyebrow mb-6 inline-block bg-cream/10 text-cream backdrop-blur">
+            <span className="reveal inline-flex items-center gap-3 text-[11px] uppercase tracking-[0.28em] text-cream/80">
+              <span className="h-px w-10 bg-accent" />
               The Craft
             </span>
-            <h1 className="reveal stagger-1 font-heading text-5xl md:text-7xl text-cream leading-[0.92]">
+            <h1 className="reveal stagger-1 mt-6 font-heading text-5xl md:text-7xl text-cream leading-[0.9] text-balance">
               Where tradition
               <span className="block text-accent">meets precision</span>
             </h1>
@@ -94,12 +103,25 @@ export default function ManufacturingPage() {
               Step inside our facility, where 120+ master craftsmen transform premium
               leather into exceptional products.
             </p>
+
+            <div className="reveal stagger-3 mt-12 flex flex-wrap items-center gap-x-6 gap-y-3 border-t border-cream/15 pt-6 text-sm text-cream/65">
+              <span>50,000 sq ft Facility</span>
+              <span className="h-1 w-1 rounded-full bg-accent" />
+              <span>120+ Artisans</span>
+              <span className="h-1 w-1 rounded-full bg-accent" />
+              <span>ISO 9001 Certified</span>
+            </div>
           </div>
+        </div>
+
+        <div className="pointer-events-none absolute bottom-6 right-6 hidden flex-col items-center gap-2 text-cream/40 md:flex">
+          <span className="text-[10px] uppercase tracking-[0.3em] [writing-mode:vertical-rl]">Scroll</span>
+          <span className="h-12 w-px bg-gradient-to-b from-cream/50 to-transparent" />
         </div>
       </section>
 
       {/* Facility Stats */}
-      <section className="border-b border-charcoal/5 bg-stone/30 py-16">
+      {/* <section className="border-b border-charcoal/5 bg-stone/30 py-16">
         <div className="container-custom px-4 md:px-8">
           <div className="grid grid-cols-2 gap-x-6 gap-y-10 md:grid-cols-3 lg:grid-cols-6">
             {facilities.map((stat, i) => (
@@ -113,7 +135,7 @@ export default function ManufacturingPage() {
             ))}
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* Process Steps */}
       <section className="section-padding">

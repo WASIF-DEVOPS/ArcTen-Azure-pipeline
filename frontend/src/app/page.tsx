@@ -42,25 +42,34 @@ export default function Home() {
   return (
     <div ref={containerRef}>
       {/* Hero — full-bleed editorial */}
-      <section className="relative min-h-[100dvh] flex items-end overflow-hidden">
+      <section className="relative flex min-h-[100svh] flex-col justify-end overflow-hidden pt-32">
         <Image
           src="/products/inferno-black-2.jpg"
           alt="Premium leather jacket crafted by ARCTen"
           fill
           priority
           sizes="100vw"
-          className="object-cover object-center"
+          className="object-cover object-[center_25%]"
         />
-        {/* readability gradient */}
-        <div className="absolute inset-0 bg-gradient-to-t from-charcoal/90 via-charcoal/40 to-charcoal/30" />
-        <div className="absolute inset-0 bg-gradient-to-r from-charcoal/60 to-transparent" />
+        {/* readability gradients */}
+        <div className="absolute inset-0 bg-gradient-to-t from-charcoal via-charcoal/45 to-charcoal/20" />
+        <div className="absolute inset-0 bg-gradient-to-r from-charcoal/70 via-charcoal/10 to-transparent" />
+        {/* grain */}
+        <div
+          className="pointer-events-none absolute inset-0 opacity-[0.06] mix-blend-overlay"
+          style={{
+            backgroundImage:
+              "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")",
+          }}
+        />
 
-        <div className="container-custom relative z-10 px-4 md:px-8 pb-20 md:pb-28">
+        <div className="container-custom relative z-10 px-4 md:px-8 pb-16 md:pb-24">
           <div className="max-w-3xl">
-            <span className="reveal eyebrow mb-6 inline-block bg-cream/10 text-cream backdrop-blur">
+            <span className="reveal inline-flex items-center gap-3 text-[11px] uppercase tracking-[0.28em] text-cream/80">
+              <span className="h-px w-10 bg-accent" />
               Est. 2009 · 500+ Brands Served
             </span>
-            <h1 className="reveal stagger-1 font-heading text-5xl md:text-7xl lg:text-8xl text-cream leading-[0.92]">
+            <h1 className="reveal stagger-1 mt-6 font-heading text-5xl md:text-7xl lg:text-8xl text-cream leading-[0.9] text-balance">
               Premium Leather
               <span className="block text-accent">Manufacturing</span>
             </h1>
@@ -82,7 +91,22 @@ export default function Home() {
                 <span>Explore the Collection</span>
               </Link>
             </div>
+
+            {/* meta strip */}
+            <div className="reveal stagger-4 mt-12 flex flex-wrap items-center gap-x-6 gap-y-3 border-t border-cream/15 pt-6 text-sm text-cream/65">
+              <span>Custom Manufacturing</span>
+              <span className="h-1 w-1 rounded-full bg-accent" />
+              <span>Wholesale &amp; White-Label</span>
+              <span className="h-1 w-1 rounded-full bg-accent" />
+              <span>Shipped to 40+ Countries</span>
+            </div>
           </div>
+        </div>
+
+        {/* scroll cue */}
+        <div className="pointer-events-none absolute bottom-6 right-6 hidden flex-col items-center gap-2 text-cream/40 md:flex">
+          <span className="text-[10px] uppercase tracking-[0.3em] [writing-mode:vertical-rl]">Scroll</span>
+          <span className="h-12 w-px bg-gradient-to-b from-cream/50 to-transparent" />
         </div>
       </section>
 

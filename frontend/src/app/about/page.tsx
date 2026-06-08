@@ -20,34 +20,61 @@ export default function AboutPage() {
 
   return (
     <div ref={containerRef}>
-      {/* Hero — editorial split */}
-      <section className="pt-32 pb-16 md:pt-40 md:pb-24">
-        <div className="container-custom px-4 md:px-8">
-          <div className="grid grid-cols-1 items-end gap-10 lg:grid-cols-2 lg:gap-16">
-            <div>
-              <span className="reveal eyebrow mb-6 inline-block">Our Story</span>
-              <h1 className="reveal stagger-1 font-heading text-5xl md:text-7xl text-charcoal leading-[0.95]">
-                Crafting excellence
-                <span className="block text-accent">since 2009</span>
-              </h1>
-              <p className="reveal stagger-2 mt-6 max-w-lg text-lg leading-relaxed text-charcoal/60">
-                What began as a small workshop with five master craftsmen has grown
-                into a world-class manufacturing facility serving over 500 global brands.
-              </p>
-            </div>
-            <div className="reveal stagger-2">
-              <div className="relative aspect-[5/4] overflow-hidden rounded-3xl bg-stone/40">
-                <Image
-                  src="/products/evan-hart-fur-brown-1.jpg"
-                  alt="ARCTen leather craftsmanship"
-                  fill
-                  priority
-                  sizes="(max-width: 1024px) 100vw, 50vw"
-                  className="object-cover"
-                />
+      {/* Hero — full-bleed image */}
+      <section className="relative flex min-h-[100svh] flex-col justify-end overflow-hidden pt-32">
+        <Image
+          src="/products/evan-hart-fur-brown-1.jpg"
+          alt="ARCTen leather craftsmanship"
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover object-[center_20%]"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-charcoal via-charcoal/45 to-charcoal/20" />
+        <div className="absolute inset-0 bg-gradient-to-r from-charcoal/70 via-charcoal/10 to-transparent" />
+        <div
+          className="pointer-events-none absolute inset-0 opacity-[0.06] mix-blend-overlay"
+          style={{
+            backgroundImage:
+              "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")",
+          }}
+        />
+
+        <div className="container-custom relative z-10 px-4 md:px-8 pb-16 md:pb-24">
+          <div className="max-w-3xl">
+            <span className="reveal inline-flex items-center gap-3 text-[11px] uppercase tracking-[0.28em] text-cream/80">
+              <span className="h-px w-10 bg-accent" />
+              Our Story
+            </span>
+            <h1 className="reveal stagger-1 mt-6 font-heading text-5xl md:text-7xl text-cream leading-[0.9] text-balance">
+              Crafting excellence
+              <span className="block text-accent">since 2009</span>
+            </h1>
+            <p className="reveal stagger-2 mt-6 max-w-xl text-lg md:text-xl leading-relaxed text-cream/70">
+              What began as a small workshop with five master craftsmen has grown
+              into a world-class manufacturing facility serving over 500 global brands.
+            </p>
+
+            <div className="reveal stagger-3 mt-10 flex divide-x divide-cream/20 border-t border-cream/15 pt-6">
+              <div className="pr-8">
+                <p className="font-heading text-3xl text-cream tabular-nums">15+</p>
+                <p className="mt-1 text-xs uppercase tracking-wider text-cream/50">Years</p>
+              </div>
+              <div className="px-8">
+                <p className="font-heading text-3xl text-cream tabular-nums">500+</p>
+                <p className="mt-1 text-xs uppercase tracking-wider text-cream/50">Brands</p>
+              </div>
+              <div className="pl-8">
+                <p className="font-heading text-3xl text-cream tabular-nums">40+</p>
+                <p className="mt-1 text-xs uppercase tracking-wider text-cream/50">Countries</p>
               </div>
             </div>
           </div>
+        </div>
+
+        <div className="pointer-events-none absolute bottom-6 right-6 hidden flex-col items-center gap-2 text-cream/40 md:flex">
+          <span className="text-[10px] uppercase tracking-[0.3em] [writing-mode:vertical-rl]">Scroll</span>
+          <span className="h-12 w-px bg-gradient-to-b from-cream/50 to-transparent" />
         </div>
       </section>
 
