@@ -179,7 +179,7 @@ export default function AboutPage() {
       </section>
 
       {/* Team */}
-      <section className="section-padding">
+      {/* <section className="section-padding">
         <div className="container-custom px-4 md:px-8">
           <div className="text-center mb-16">
             <span className="reveal eyebrow mb-4 inline-block">Leadership</span>
@@ -207,7 +207,7 @@ export default function AboutPage() {
             ))}
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* CTA */}
       <section className="section-padding bg-charcoal">

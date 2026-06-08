@@ -81,9 +81,9 @@ export default function Home() {
           </div>
         </div>
       </section>
-
+q
       {/* Value Proposition - Bento Grid */}
-      <section className="section-padding">
+      {/* <section className="section-padding">
         <div className="container-custom px-4 md:px-8">
           <div className="text-center mb-16">
             <span className="reveal eyebrow mb-4 inline-block">Why ARCTen</span>
@@ -93,7 +93,6 @@ export default function Home() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
-            {/* Large card */}
             <div className="reveal md:col-span-8 card-shell">
               <div className="card-inner p-8 md:p-12 h-full">
                 <div className="w-14 h-14 rounded-2xl bg-accent/10 flex items-center justify-center text-accent mb-6">
@@ -107,7 +106,6 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Stacked cards */}
             <div className="reveal stagger-1 md:col-span-4 flex flex-col gap-4">
               <div className="card-shell flex-1">
                 <div className="card-inner p-6 h-full">
@@ -129,7 +127,6 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Bottom row */}
             <div className="reveal stagger-2 md:col-span-4 card-shell">
               <div className="card-inner p-6 h-full">
                 <div className="w-12 h-12 rounded-xl bg-accent/10 flex items-center justify-center text-accent mb-4">
@@ -156,7 +153,7 @@ export default function Home() {
             </div>
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* Products Preview */}
       <section className="section-padding bg-stone/30">
