@@ -2,11 +2,16 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import Logo from './Logo';
 
 export default function Navigation() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const pathname = usePathname();
+
+  const isActive = (href: string) =>
+    href === '/' ? pathname === '/' : pathname?.startsWith(href);
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 50);
@@ -22,7 +27,7 @@ export default function Navigation() {
   const navLinks = [
     { href: '/', label: 'Home' },
     { href: '/about', label: 'About' },
-    { href: '/gallery', label: 'Gallery' },
+    { href: '/products', label: 'Products' },
     { href: '/manufacturing', label: 'Manufacturing' },
   ];
 
@@ -47,11 +52,19 @@ export default function Navigation() {
               <Link
                 key={link.href}
                 href={link.href}
-                className="relative px-4 py-2 text-sm font-medium text-charcoal/70 
-                         transition-all duration-300 ease-out-expo hover:text-charcoal
-                         rounded-full hover:bg-black/[0.03]"
+                aria-current={isActive(link.href) ? 'page' : undefined}
+                className={`relative px-4 py-2 text-sm font-medium 
+                         transition-all duration-300 ease-out-expo
+                         rounded-full hover:bg-black/[0.03] ${
+                           isActive(link.href)
+                             ? 'text-charcoal'
+                             : 'text-charcoal/70 hover:text-charcoal'
+                         }`}
               >
                 {link.label}
+                {isActive(link.href) && (
+                  <span className="absolute inset-x-4 -bottom-0.5 h-px bg-accent" />
+                )}
               </Link>
             ))}
             <Link href="/#quote" className="btn-premium ml-2 text-sm py-2.5 px-5 group">

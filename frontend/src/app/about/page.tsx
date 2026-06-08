@@ -3,94 +3,88 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { useScrollReveal } from '@/hooks/useScrollReveal';
-import missionImage from '@/assets/images/micah-tindell-ysu9athq_BU-unsplash.jpg';
 
-// Phosphor Icons
-import { 
-  PiSealCheck, 
-  PiUser, 
-  PiUsersThree,
-  PiArrowRight
-} from 'react-icons/pi';
+import { PiSealCheck, PiUser, PiUsersThree, PiArrowRight } from 'react-icons/pi';
 
 export default function AboutPage() {
   const containerRef = useScrollReveal();
 
-  const team = [
-    { name: 'Marcus Chen', role: 'Founder & CEO', years: '25+ years in leather' },
-    { name: 'Elena Rossi', role: 'Head of Design', years: 'Former Gucci designer' },
-    { name: 'James Okonkwo', role: 'Production Director', years: 'ISO 9001 specialist' },
-    { name: 'Sofia Martinez', role: 'Client Relations', years: '500+ brand partnerships' },
-  ];
-
   const milestones = [
-    { year: '2009', title: 'Founded', desc: 'Started with 5 craftsmen in a small workshop' },
-    { year: '2012', title: 'First Export', desc: 'Expanded to serve European fashion houses' },
-    { year: '2015', title: 'ISO Certified', desc: 'Achieved ISO 9001 quality certification' },
-    { year: '2018', title: '10K Units/Month', desc: 'Scaled production capacity significantly' },
-    { year: '2021', title: 'Sustainability', desc: 'Launched eco-friendly leather line' },
-    { year: '2024', title: '500+ Brands', desc: 'Serving global partners across 40 countries' },
+    { year: '2009', title: 'Founded', desc: 'Started with 5 craftsmen in a small workshop.' },
+    { year: '2012', title: 'First Export', desc: 'Expanded to serve European fashion houses.' },
+    { year: '2015', title: 'ISO Certified', desc: 'Achieved ISO 9001 quality certification.' },
+    { year: '2018', title: '10K Units/Month', desc: 'Scaled production capacity significantly.' },
+    { year: '2021', title: 'Sustainability', desc: 'Launched eco-friendly leather line.' },
+    { year: '2024', title: '500+ Brands', desc: 'Serving partners across 40 countries.' },
   ];
 
   return (
     <div ref={containerRef}>
-      {/* Hero */}
-      <section className="min-h-[70dvh] flex items-center justify-center relative pt-32 pb-20">
-        <div className="absolute top-1/3 -left-48 w-96 h-96 bg-accent/10 rounded-full blur-3xl" />
-        <div className="absolute bottom-1/4 -right-48 w-80 h-80 bg-secondary/10 rounded-full blur-3xl" />
-        
-        <div className="container-custom px-4 md:px-8 relative z-10">
-          <div className="max-w-4xl mx-auto text-center">
-            <span className="reveal eyebrow mb-6 inline-block">Our Story</span>
-            <h1 className="reveal stagger-1 font-heading text-5xl md:text-7xl text-charcoal mb-8 leading-[0.95]">
-              Crafting Excellence
-              <span className="block text-accent">Since 2009</span>
-            </h1>
-            <p className="reveal stagger-2 text-charcoal/60 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed">
-              What began as a small workshop with five master craftsmen has grown into 
-              a world-class manufacturing facility serving over 500 global brands.
-            </p>
+      {/* Hero — editorial split */}
+      <section className="pt-32 pb-16 md:pt-40 md:pb-24">
+        <div className="container-custom px-4 md:px-8">
+          <div className="grid grid-cols-1 items-end gap-10 lg:grid-cols-2 lg:gap-16">
+            <div>
+              <span className="reveal eyebrow mb-6 inline-block">Our Story</span>
+              <h1 className="reveal stagger-1 font-heading text-5xl md:text-7xl text-charcoal leading-[0.95]">
+                Crafting excellence
+                <span className="block text-accent">since 2009</span>
+              </h1>
+              <p className="reveal stagger-2 mt-6 max-w-lg text-lg leading-relaxed text-charcoal/60">
+                What began as a small workshop with five master craftsmen has grown
+                into a world-class manufacturing facility serving over 500 global brands.
+              </p>
+            </div>
+            <div className="reveal stagger-2">
+              <div className="relative aspect-[5/4] overflow-hidden rounded-3xl bg-stone/40">
+                <Image
+                  src="/products/evan-hart-fur-brown-1.jpg"
+                  alt="ARCTen leather craftsmanship"
+                  fill
+                  priority
+                  sizes="(max-width: 1024px) 100vw, 50vw"
+                  className="object-cover"
+                />
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Mission Statement */}
+      {/* Mission */}
       <section className="section-padding bg-charcoal text-cream">
         <div className="container-custom px-4 md:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+          <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-2 lg:gap-16">
             <div>
-              <span className="reveal eyebrow bg-accent/20 text-accent mb-6 inline-block">Our Mission</span>
-              <h2 className="reveal stagger-1 font-heading text-4xl md:text-5xl mb-6">
-                Empowering Brands Through Exceptional Craftsmanship
+              <span className="reveal eyebrow mb-6 inline-block bg-accent/20 text-accent">Our Mission</span>
+              <h2 className="reveal stagger-1 font-heading text-4xl md:text-5xl leading-tight">
+                Empowering brands through exceptional craftsmanship
               </h2>
-              <p className="reveal stagger-2 text-cream/60 text-lg leading-relaxed mb-8">
-                We believe every brand deserves access to premium leather manufacturing without 
-                compromising on quality, ethics, or sustainability. Our mission is to be the 
-                trusted partner that transforms your vision into tangible excellence.
+              <p className="reveal stagger-2 mt-6 text-lg leading-relaxed text-cream/60">
+                Every brand deserves access to premium leather manufacturing without
+                compromising on quality, ethics, or sustainability. We&apos;re the
+                trusted partner that turns your vision into tangible excellence.
               </p>
-              <div className="reveal stagger-3 grid grid-cols-2 gap-8">
+              <div className="reveal stagger-3 mt-10 grid grid-cols-2 gap-8">
                 <div>
-                  <p className="font-heading text-4xl text-accent mb-2">98.7%</p>
-                  <p className="text-cream/50 text-sm">On-time delivery rate</p>
+                  <p className="font-heading text-4xl text-accent mb-2 tabular-nums">98.7%</p>
+                  <p className="text-sm text-cream/50">On-time delivery rate</p>
                 </div>
                 <div>
-                  <p className="font-heading text-4xl text-accent mb-2">0.3%</p>
-                  <p className="text-cream/50 text-sm">Defect rate</p>
+                  <p className="font-heading text-4xl text-accent mb-2 tabular-nums">0.3%</p>
+                  <p className="text-sm text-cream/50">Defect rate</p>
                 </div>
               </div>
             </div>
             <div className="reveal stagger-2">
-              <div className="image-shell bg-white/5">
-                <div className="image-inner aspect-[4/5] relative overflow-hidden">
-                  <Image
-                    src={missionImage}
-                    alt="Leather craftsmanship at ARCTen"
-                    fill
-                    className="object-cover"
-                    placeholder="blur"
-                    sizes="(max-width: 1024px) 100vw, 50vw"
-                  />
-                </div>
+              <div className="relative aspect-[4/5] overflow-hidden rounded-3xl">
+                <Image
+                  src="/products/dean-brown-biker-2.jpg"
+                  alt="Leather jacket detail"
+                  fill
+                  sizes="(max-width: 1024px) 100vw, 50vw"
+                  className="object-cover"
+                />
               </div>
             </div>
           </div>
@@ -100,39 +94,37 @@ export default function AboutPage() {
       {/* Values */}
       <section className="section-padding">
         <div className="container-custom px-4 md:px-8">
-          <div className="text-center mb-16">
-            <span className="reveal eyebrow mb-4 inline-block">What Drives Us</span>
-            <h2 className="reveal stagger-1 font-heading text-4xl md:text-6xl text-charcoal">
-              Our Core Values
+          <div className="mb-16 max-w-2xl">
+            <span className="reveal eyebrow mb-4 inline-block">What drives us</span>
+            <h2 className="reveal stagger-1 font-heading text-4xl md:text-6xl text-charcoal leading-[0.95]">
+              Our core values
             </h2>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 gap-x-10 gap-y-12 md:grid-cols-3">
             {[
-              { 
-                icon: <PiSealCheck className="w-7 h-7" />,
-                title: 'Uncompromising Quality', 
-                desc: 'Every stitch, every cut, every finish is held to the highest standard. We never compromise on materials or craftsmanship.' 
+              {
+                icon: <PiSealCheck className="h-7 w-7" />,
+                title: 'Uncompromising Quality',
+                desc: 'Every stitch, cut, and finish is held to the highest standard. We never compromise on materials or craftsmanship.',
               },
-              { 
-                icon: <PiUser className="w-7 h-7" />,
-                title: 'Ethical Manufacturing', 
-                desc: 'Fair wages, safe conditions, and sustainable practices. Our workers are artisans, not just employees.' 
+              {
+                icon: <PiUser className="h-7 w-7" />,
+                title: 'Ethical Manufacturing',
+                desc: 'Fair wages, safe conditions, and sustainable practices. Our workers are artisans, not just employees.',
               },
-              { 
-                icon: <PiUsersThree className="w-7 h-7" />,
-                title: 'Partnership Mindset', 
-                desc: 'Your success is our success. We invest in understanding your brand and becoming an extension of your team.' 
+              {
+                icon: <PiUsersThree className="h-7 w-7" />,
+                title: 'Partnership Mindset',
+                desc: 'Your success is our success. We invest in understanding your brand and become an extension of your team.',
               },
             ].map((value, i) => (
-              <div key={value.title} className={`reveal stagger-${i + 1} card-shell`}>
-                <div className="card-inner p-8 md:p-10 h-full">
-                  <div className="w-14 h-14 rounded-2xl bg-accent/10 flex items-center justify-center text-accent mb-6">
-                    {value.icon}
-                  </div>
-                  <h3 className="font-heading text-2xl text-charcoal mb-4">{value.title}</h3>
-                  <p className="text-charcoal/60 leading-relaxed">{value.desc}</p>
-                </div>
+              <div key={value.title} className={`reveal stagger-${i + 1} border-t border-charcoal/10 pt-6`}>
+                <span className="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-accent/10 text-accent">
+                  {value.icon}
+                </span>
+                <h3 className="font-heading text-2xl text-charcoal">{value.title}</h3>
+                <p className="mt-3 leading-relaxed text-charcoal/60">{value.desc}</p>
               </div>
             ))}
           </div>
@@ -142,35 +134,33 @@ export default function AboutPage() {
       {/* Timeline */}
       <section className="section-padding bg-stone/30">
         <div className="container-custom px-4 md:px-8">
-          <div className="text-center mb-16">
-            <span className="reveal eyebrow mb-4 inline-block">Our Journey</span>
+          <div className="mb-16 text-center">
+            <span className="reveal eyebrow mb-4 inline-block">Our journey</span>
             <h2 className="reveal stagger-1 font-heading text-4xl md:text-6xl text-charcoal">
-              15 Years of Growth
+              15 years of growth
             </h2>
           </div>
 
-          <div className="max-w-4xl mx-auto">
+          <div className="mx-auto max-w-4xl">
             <div className="relative">
-              {/* Timeline line */}
-              <div className="absolute left-0 md:left-1/2 top-0 bottom-0 w-px bg-charcoal/10 -translate-x-1/2 hidden md:block" />
-              
-              {milestones.map((milestone, i) => (
-                <div 
-                  key={milestone.year} 
-                  className={`reveal stagger-${Math.min(i + 1, 5)} relative flex flex-col md:flex-row gap-4 md:gap-8 mb-12 last:mb-0
-                    ${i % 2 === 0 ? 'md:flex-row-reverse md:text-right' : ''}`}
+              <div className="absolute left-0 top-0 bottom-0 hidden w-px -translate-x-1/2 bg-charcoal/10 md:left-1/2 md:block" />
+              {milestones.map((m, i) => (
+                <div
+                  key={m.year}
+                  className={`reveal stagger-${Math.min(i + 1, 5)} relative mb-12 flex flex-col gap-4 last:mb-0 md:flex-row md:gap-8 ${
+                    i % 2 === 0 ? 'md:flex-row-reverse md:text-right' : ''
+                  }`}
                 >
                   <div className="md:w-1/2">
-                    <div className={`card-shell ${i % 2 === 0 ? 'md:ml-8' : 'md:mr-8'}`}>
-                      <div className="card-inner p-6">
-                        <span className="font-heading text-3xl text-accent">{milestone.year}</span>
-                        <h3 className="font-heading text-xl text-charcoal mt-2 mb-1">{milestone.title}</h3>
-                        <p className="text-charcoal/60 text-sm">{milestone.desc}</p>
+                    <div className={i % 2 === 0 ? 'md:ml-8' : 'md:mr-8'}>
+                      <div className="rounded-2xl bg-cream p-6 shadow-[0_1px_3px_rgba(0,0,0,0.04)] ring-1 ring-charcoal/[0.04]">
+                        <span className="font-heading text-3xl text-accent">{m.year}</span>
+                        <h3 className="mt-2 mb-1 font-heading text-xl text-charcoal">{m.title}</h3>
+                        <p className="text-sm text-charcoal/60">{m.desc}</p>
                       </div>
                     </div>
                   </div>
-                  {/* Timeline dot */}
-                  <div className="absolute left-0 md:left-1/2 top-6 w-3 h-3 bg-accent rounded-full -translate-x-1/2 hidden md:block ring-4 ring-cream" />
+                  <div className="absolute left-0 top-6 hidden h-3 w-3 -translate-x-1/2 rounded-full bg-accent ring-4 ring-stone/30 md:left-1/2 md:block" />
                 </div>
               ))}
             </div>
@@ -178,50 +168,19 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Team */}
-      {/* <section className="section-padding">
-        <div className="container-custom px-4 md:px-8">
-          <div className="text-center mb-16">
-            <span className="reveal eyebrow mb-4 inline-block">Leadership</span>
-            <h2 className="reveal stagger-1 font-heading text-4xl md:text-6xl text-charcoal">
-              Meet the Team
-            </h2>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {team.map((member, i) => (
-              <div key={member.name} className={`reveal stagger-${i + 1}`}>
-                <div className="card-shell">
-                  <div className="card-inner p-6 text-center">
-                    <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-gradient-to-br from-accent/20 to-secondary/20 flex items-center justify-center">
-                      <span className="font-heading text-2xl text-charcoal/30">
-                        {member.name.split(' ').map(n => n[0]).join('')}
-                      </span>
-                    </div>
-                    <h3 className="font-heading text-lg text-charcoal">{member.name}</h3>
-                    <p className="text-accent text-sm mb-1">{member.role}</p>
-                    <p className="text-charcoal/40 text-xs">{member.years}</p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section> */}
-
       {/* CTA */}
       <section className="section-padding bg-charcoal">
         <div className="container-custom px-4 md:px-8 text-center">
           <h2 className="reveal font-heading text-4xl md:text-5xl text-cream mb-6">
-            Ready to Work Together?
+            Ready to work together?
           </h2>
-          <p className="reveal stagger-1 text-cream/60 max-w-xl mx-auto mb-10">
-            Join the 500+ brands who trust ARCTen for their premium leather manufacturing needs.
+          <p className="reveal stagger-1 mx-auto mb-10 max-w-xl text-cream/60">
+            Join the 500+ brands who trust ARCTen for their premium leather manufacturing.
           </p>
-          <Link href="/#quote" className="reveal stagger-2 btn-premium bg-accent text-charcoal hover:bg-cream inline-flex group">
+          <Link href="/#quote" className="reveal stagger-2 btn-premium group inline-flex bg-accent text-charcoal hover:bg-cream">
             <span>Request a Quote</span>
             <span className="btn-premium-icon bg-charcoal/10">
-              <PiArrowRight className="w-4 h-4" />
+              <PiArrowRight className="h-4 w-4" />
             </span>
           </Link>
         </div>

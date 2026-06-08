@@ -3,10 +3,8 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { useScrollReveal } from '@/hooks/useScrollReveal';
-import certificationImage from '@/assets/images/riccardo-sartori-NOtnpXvJwFk-unsplash.jpg';
 
-// Phosphor Icons
-import { 
+import {
   PiBuildings,
   PiUsersThree,
   PiScissors,
@@ -16,7 +14,7 @@ import {
   PiGlobe,
   PiRecycle,
   PiSun,
-  PiArrowRight
+  PiArrowRight,
 } from 'react-icons/pi';
 
 export default function ManufacturingPage() {
@@ -26,140 +24,91 @@ export default function ManufacturingPage() {
     {
       number: '01',
       title: 'Material Selection',
-      description: 'We source only the finest full-grain leather from certified tanneries in Italy, Argentina, and New Zealand. Each hide is hand-inspected for quality, texture, and consistency.',
+      description:
+        'We source only the finest full-grain leather from certified tanneries in Italy, Argentina, and New Zealand. Each hide is hand-inspected for quality, texture, and consistency.',
       details: ['Full-grain & top-grain options', 'Vegetable & chrome tanning', 'Custom color matching', 'Sustainable sourcing'],
     },
     {
       number: '02',
       title: 'Pattern & Cutting',
-      description: 'Master pattern makers create precise templates using CAD technology. Our cutting specialists maximize material efficiency while ensuring each piece meets exact specifications.',
+      description:
+        'Master pattern makers create precise templates using CAD technology. Our cutting specialists maximize material efficiency while ensuring each piece meets exact specifications.',
       details: ['CAD precision patterns', 'Laser-guided cutting', 'Zero-waste optimization', 'Quality grading system'],
     },
     {
       number: '03',
       title: 'Craftsmanship',
-      description: 'Skilled artisans with 10+ years of experience hand-stitch, edge-finish, and assemble each piece. Traditional techniques meet modern precision.',
+      description:
+        'Skilled artisans with 10+ years of experience hand-stitch, edge-finish, and assemble each piece. Traditional techniques meet modern precision.',
       details: ['Hand-stitched seams', 'Burnished edges', 'Custom hardware fitting', 'Reinforced stress points'],
     },
     {
       number: '04',
       title: 'Quality Control',
-      description: 'Every item undergoes a 47-point inspection process. We test durability, finish quality, hardware function, and overall aesthetics before approval.',
+      description:
+        'Every item undergoes a 47-point inspection process. We test durability, finish quality, hardware function, and overall aesthetics before approval.',
       details: ['47-point inspection', 'Stress testing', 'Color consistency check', 'Final polish & conditioning'],
     },
     {
       number: '05',
       title: 'Packaging & Delivery',
-      description: 'Products are carefully packaged in premium materials with your branding. We offer global shipping with real-time tracking and insurance.',
+      description:
+        'Products are carefully packaged in premium materials with your branding. We offer global shipping with real-time tracking and insurance.',
       details: ['Custom branded packaging', 'Dust bags & boxes', 'Global logistics network', 'Real-time tracking'],
     },
   ];
 
   const facilities = [
-    { label: 'Production Floor', value: '50,000 sq ft' },
-    { label: 'Master Craftsmen', value: '120+' },
-    { label: 'Cutting Tables', value: '24' },
-    { label: 'Sewing Stations', value: '80' },
-    { label: 'QC Inspectors', value: '15' },
-    { label: 'Daily Capacity', value: '500 units' },
+    { label: 'Production Floor', value: '50,000 sq ft', icon: <PiBuildings className="h-5 w-5" /> },
+    { label: 'Master Craftsmen', value: '120+', icon: <PiUsersThree className="h-5 w-5" /> },
+    { label: 'Cutting Tables', value: '24', icon: <PiScissors className="h-5 w-5" /> },
+    { label: 'Sewing Stations', value: '80', icon: <PiDesktop className="h-5 w-5" /> },
+    { label: 'QC Inspectors', value: '15', icon: <PiSealCheck className="h-5 w-5" /> },
+    { label: 'Daily Capacity', value: '500 units', icon: <PiPackage className="h-5 w-5" /> },
   ];
 
   return (
     <div ref={containerRef}>
-      {/* Hero */}
-      <section className="min-h-[80dvh] flex items-center justify-center relative pt-24 pb-16">
-        <div className="absolute top-1/4 -left-48 w-96 h-96 bg-secondary/10 rounded-full blur-3xl" />
-        <div className="absolute bottom-1/3 -right-48 w-80 h-80 bg-accent/10 rounded-full blur-3xl" />
-        
-        <div className="container-custom px-4 md:px-8 relative z-10">
-          <div className="max-w-4xl mx-auto text-center">
-            <span className="reveal eyebrow mb-6 inline-block">The Craft</span>
-            <h1 className="reveal stagger-1 font-heading text-5xl md:text-7xl text-charcoal mb-8 leading-[0.95]">
-              Where Tradition
-              <span className="block text-accent">Meets Precision</span>
+      {/* Hero — full-bleed image */}
+      <section className="relative flex min-h-[85dvh] items-end overflow-hidden">
+        <Image
+          src="/products/sheriff-brown-suede-2.jpg"
+          alt="ARCTen leather manufacturing"
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover object-center"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-charcoal/90 via-charcoal/40 to-charcoal/30" />
+
+        <div className="container-custom relative z-10 px-4 md:px-8 pb-20 md:pb-28">
+          <div className="max-w-3xl">
+            <span className="reveal eyebrow mb-6 inline-block bg-cream/10 text-cream backdrop-blur">
+              The Craft
+            </span>
+            <h1 className="reveal stagger-1 font-heading text-5xl md:text-7xl text-cream leading-[0.92]">
+              Where tradition
+              <span className="block text-accent">meets precision</span>
             </h1>
-            <p className="reveal stagger-2 text-charcoal/60 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed">
-              Step inside our state-of-the-art facility where 120+ master craftsmen 
-              transform premium leather into exceptional products.
+            <p className="reveal stagger-2 mt-6 max-w-xl text-lg md:text-xl leading-relaxed text-cream/70">
+              Step inside our facility, where 120+ master craftsmen transform premium
+              leather into exceptional products.
             </p>
           </div>
         </div>
       </section>
 
-      {/* Video Section */}
-      {/* <section className="section-padding bg-charcoal">
-        <div className="container-custom px-4 md:px-8">
-          <div className="reveal">
-            <div className="image-shell bg-white/5">
-              <div className="image-inner relative aspect-video bg-gradient-to-br from-stone-800 to-stone-900 overflow-hidden">
-                {!isVideoPlaying ? (
-                  <>
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <div className="text-center">
-                        <span className="font-heading text-6xl md:text-8xl text-white/10 block mb-4">ARCTen</span>
-                        <span className="text-white/30 text-sm uppercase tracking-widest">Manufacturing Process</span>
-                      </div>
-                    </div>
-                    
-                    <button
-                      onClick={() => setIsVideoPlaying(true)}
-                      className="absolute inset-0 flex items-center justify-center group"
-                    >
-                      <div className="w-24 h-24 md:w-32 md:h-32 rounded-full bg-accent flex items-center justify-center
-                                    transition-all duration-500 ease-out-expo
-                                    group-hover:scale-110 group-hover:bg-cream">
-                        <svg className="w-8 h-8 md:w-10 md:h-10 text-charcoal ml-1" fill="currentColor" viewBox="0 0 24 24">
-                          <path d="M8 5v14l11-7z" />
-                        </svg>
-                      </div>
-                    </button>
-
-                    <div className="absolute bottom-6 right-6 bg-black/50 backdrop-blur-sm px-3 py-1.5 rounded-full">
-                      <span className="text-white/80 text-sm">4:32</span>
-                    </div>
-                  </>
-                ) : (
-                  <iframe
-                    className="absolute inset-0 w-full h-full"
-                    src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1"
-                    title="ARCTen Manufacturing Process"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                  />
-                )}
-              </div>
-            </div>
-          </div>
-
-          <div className="reveal stagger-1 mt-8 text-center">
-            <p className="text-cream/60 max-w-2xl mx-auto">
-              Watch our master craftsmen at work. From raw leather to finished product, 
-              every step is executed with precision and care.
-            </p>
-          </div>
-        </div>
-      </section> */}
-
       {/* Facility Stats */}
-      <section className="py-20 bg-stone/30 border-y border-charcoal/5">
+      <section className="border-b border-charcoal/5 bg-stone/30 py-16">
         <div className="container-custom px-4 md:px-8">
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+          <div className="grid grid-cols-2 gap-x-6 gap-y-10 md:grid-cols-3 lg:grid-cols-6">
             {facilities.map((stat, i) => (
-              <div key={stat.label} className={`reveal stagger-${Math.min(i + 1, 5)}`}>
-                <div className="card-shell h-full">
-                  <div className="card-inner p-5 text-center h-full flex flex-col justify-center">
-                    <div className="w-10 h-10 mx-auto mb-3 rounded-xl bg-accent/10 flex items-center justify-center text-accent">
-                      {i === 0 && <PiBuildings className="w-5 h-5" />}
-                      {i === 1 && <PiUsersThree className="w-5 h-5" />}
-                      {i === 2 && <PiScissors className="w-5 h-5" />}
-                      {i === 3 && <PiDesktop className="w-5 h-5" />}
-                      {i === 4 && <PiSealCheck className="w-5 h-5" />}
-                      {i === 5 && <PiPackage className="w-5 h-5" />}
-                    </div>
-                    <p className="font-heading text-2xl md:text-3xl text-charcoal mb-1">{stat.value}</p>
-                    <p className="text-charcoal/50 text-xs">{stat.label}</p>
-                  </div>
-                </div>
+              <div key={stat.label} className={`reveal stagger-${Math.min(i + 1, 5)} text-center`}>
+                <span className="mx-auto mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-accent/10 text-accent">
+                  {stat.icon}
+                </span>
+                <p className="font-heading text-2xl text-charcoal md:text-3xl tabular-nums">{stat.value}</p>
+                <p className="mt-1 text-xs text-charcoal/50">{stat.label}</p>
               </div>
             ))}
           </div>
@@ -169,45 +118,33 @@ export default function ManufacturingPage() {
       {/* Process Steps */}
       <section className="section-padding">
         <div className="container-custom px-4 md:px-8">
-          <div className="text-center mb-20">
+          <div className="mb-16 max-w-2xl">
             <span className="reveal eyebrow mb-4 inline-block">The Process</span>
-            <h2 className="reveal stagger-1 font-heading text-4xl md:text-6xl text-charcoal">
-              Five Steps to Excellence
+            <h2 className="reveal stagger-1 font-heading text-4xl md:text-6xl text-charcoal leading-[0.95]">
+              Five steps to excellence
             </h2>
           </div>
 
-          <div className="space-y-8">
+          <div className="divide-y divide-charcoal/10 border-y border-charcoal/10">
             {processSteps.map((step, i) => (
-              <div 
-                key={step.number} 
-                className={`reveal stagger-${Math.min(i + 1, 5)}`}
-              >
-                <div className="card-shell">
-                  <div className="card-inner p-8 md:p-12">
-                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-                      {/* Step number */}
-                      <div className="lg:col-span-2">
-                        <span className="font-heading text-7xl md:text-8xl text-accent/20">{step.number}</span>
-                      </div>
-                      
-                      {/* Content */}
-                      <div className="lg:col-span-6">
-                        <h3 className="font-heading text-2xl md:text-3xl text-charcoal mb-4">{step.title}</h3>
-                        <p className="text-charcoal/60 leading-relaxed">{step.description}</p>
-                      </div>
-                      
-                      {/* Details */}
-                      <div className="lg:col-span-4">
-                        <ul className="space-y-3">
-                          {step.details.map((detail) => (
-                            <li key={detail} className="flex items-center gap-3 text-charcoal/70">
-                              <span className="w-1.5 h-1.5 rounded-full bg-accent flex-shrink-0" />
-                              <span className="text-sm">{detail}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    </div>
+              <div key={step.number} className={`reveal stagger-${Math.min(i + 1, 5)} py-10`}>
+                <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-12 lg:gap-8">
+                  <div className="lg:col-span-2">
+                    <span className="font-heading text-6xl text-accent/25 md:text-7xl">{step.number}</span>
+                  </div>
+                  <div className="lg:col-span-6">
+                    <h3 className="font-heading text-2xl text-charcoal md:text-3xl">{step.title}</h3>
+                    <p className="mt-4 leading-relaxed text-charcoal/60">{step.description}</p>
+                  </div>
+                  <div className="lg:col-span-4">
+                    <ul className="space-y-3">
+                      {step.details.map((detail) => (
+                        <li key={detail} className="flex items-center gap-3 text-charcoal/70">
+                          <span className="h-1.5 w-1.5 flex-shrink-0 rounded-full bg-accent" />
+                          <span className="text-sm">{detail}</span>
+                        </li>
+                      ))}
+                    </ul>
                   </div>
                 </div>
               </div>
@@ -216,49 +153,43 @@ export default function ManufacturingPage() {
         </div>
       </section>
 
-      {/* Quality Certifications */}
+      {/* Certifications */}
       <section className="section-padding bg-stone/30">
         <div className="container-custom px-4 md:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+          <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-2 lg:gap-16">
+            <div className="reveal">
+              <div className="relative aspect-square overflow-hidden rounded-3xl">
+                <Image
+                  src="/products/legacy-black-biker-2.jpg"
+                  alt="Quality craftsmanship at ARCTen"
+                  fill
+                  sizes="(max-width: 1024px) 100vw, 50vw"
+                  className="object-cover"
+                />
+              </div>
+            </div>
+
             <div>
               <span className="reveal eyebrow mb-6 inline-block">Certifications</span>
-              <h2 className="reveal stagger-1 font-heading text-4xl md:text-5xl text-charcoal mb-6">
-                Quality You Can Trust
+              <h2 className="reveal stagger-1 font-heading text-4xl md:text-5xl text-charcoal leading-tight">
+                Quality you can trust
               </h2>
-              <p className="reveal stagger-2 text-charcoal/60 text-lg leading-relaxed mb-8">
-                Our facility meets the highest international standards for quality management, 
-                environmental responsibility, and ethical manufacturing practices.
+              <p className="reveal stagger-2 mt-6 text-lg leading-relaxed text-charcoal/60">
+                Our facility meets the highest international standards for quality
+                management, environmental responsibility, and ethical manufacturing.
               </p>
-              
-              <div className="reveal stagger-3 grid grid-cols-2 gap-6">
+              <div className="reveal stagger-3 mt-10 grid grid-cols-2 gap-x-10 gap-y-8">
                 {[
                   { cert: 'ISO 9001:2015', desc: 'Quality Management' },
                   { cert: 'ISO 14001', desc: 'Environmental' },
                   { cert: 'OEKO-TEX', desc: 'Safe Materials' },
                   { cert: 'LWG Gold', desc: 'Leather Working Group' },
                 ].map((item) => (
-                  <div key={item.cert} className="card-shell">
-                    <div className="card-inner p-4 text-center">
-                      <p className="font-heading text-lg text-charcoal">{item.cert}</p>
-                      <p className="text-charcoal/50 text-xs mt-1">{item.desc}</p>
-                    </div>
+                  <div key={item.cert} className="border-t border-charcoal/10 pt-4">
+                    <p className="font-heading text-xl text-charcoal">{item.cert}</p>
+                    <p className="mt-1 text-sm text-charcoal/50">{item.desc}</p>
                   </div>
                 ))}
-              </div>
-            </div>
-
-            <div className="reveal stagger-2">
-              <div className="image-shell">
-                <div className="image-inner aspect-square relative overflow-hidden">
-                  <Image
-                    src={certificationImage}
-                    alt="Quality craftsmanship at ARCTen"
-                    fill
-                    className="object-cover"
-                    placeholder="blur"
-                    sizes="(max-width: 1024px) 100vw, 50vw"
-                  />
-                </div>
               </div>
             </div>
           </div>
@@ -268,43 +199,29 @@ export default function ManufacturingPage() {
       {/* Sustainability */}
       <section className="section-padding bg-charcoal text-cream">
         <div className="container-custom px-4 md:px-8">
-          <div className="max-w-4xl mx-auto text-center">
-            <span className="reveal eyebrow bg-accent/20 text-accent mb-6 inline-block">Sustainability</span>
-            <h2 className="reveal stagger-1 font-heading text-4xl md:text-5xl mb-6">
-              Crafted Responsibly
+          <div className="mx-auto max-w-4xl text-center">
+            <span className="reveal eyebrow mb-6 inline-block bg-accent/20 text-accent">Sustainability</span>
+            <h2 className="reveal stagger-1 font-heading text-4xl md:text-5xl">
+              Crafted responsibly
             </h2>
-            <p className="reveal stagger-2 text-cream/60 text-lg leading-relaxed mb-12">
-              We&apos;re committed to sustainable practices throughout our supply chain. 
-              From responsibly sourced leather to zero-waste cutting techniques, 
-              we minimize our environmental footprint without compromising quality.
+            <p className="reveal stagger-2 mx-auto mt-6 mb-12 max-w-2xl text-lg leading-relaxed text-cream/60">
+              We&apos;re committed to sustainable practices across our supply chain. From
+              responsibly sourced leather to zero-waste cutting, we minimize our footprint
+              without compromising quality.
             </p>
 
-            <div className="reveal stagger-3 grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="reveal stagger-3 grid grid-cols-1 gap-8 md:grid-cols-3">
               {[
-                { 
-                  icon: <PiGlobe className="w-7 h-7" />,
-                  title: 'Responsible Sourcing', 
-                  desc: 'LWG-certified tanneries only' 
-                },
-                { 
-                  icon: <PiRecycle className="w-7 h-7" />,
-                  title: 'Zero Waste', 
-                  desc: '98% material utilization rate' 
-                },
-                { 
-                  icon: <PiSun className="w-7 h-7" />,
-                  title: 'Clean Energy', 
-                  desc: '60% solar-powered facility' 
-                },
+                { icon: <PiGlobe className="h-7 w-7" />, title: 'Responsible Sourcing', desc: 'LWG-certified tanneries only.' },
+                { icon: <PiRecycle className="h-7 w-7" />, title: 'Zero Waste', desc: '98% material utilization rate.' },
+                { icon: <PiSun className="h-7 w-7" />, title: 'Clean Energy', desc: '60% solar-powered facility.' },
               ].map((item) => (
-                <div key={item.title} className="card-shell bg-white/5">
-                  <div className="card-inner bg-white/5 p-6 text-center">
-                    <div className="w-14 h-14 rounded-2xl bg-accent/20 flex items-center justify-center text-accent mb-4 mx-auto">
-                      {item.icon}
-                    </div>
-                    <h3 className="font-heading text-xl text-cream mb-2">{item.title}</h3>
-                    <p className="text-cream/50 text-sm">{item.desc}</p>
-                  </div>
+                <div key={item.title} className="border-t border-cream/10 pt-6 text-left">
+                  <span className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-accent/20 text-accent">
+                    {item.icon}
+                  </span>
+                  <h3 className="font-heading text-xl text-cream">{item.title}</h3>
+                  <p className="mt-2 text-sm text-cream/50">{item.desc}</p>
                 </div>
               ))}
             </div>
@@ -316,21 +233,21 @@ export default function ManufacturingPage() {
       <section className="section-padding">
         <div className="container-custom px-4 md:px-8 text-center">
           <h2 className="reveal font-heading text-4xl md:text-5xl text-charcoal mb-6">
-            Ready to See It in Action?
+            Ready to see it in action?
           </h2>
-          <p className="reveal stagger-1 text-charcoal/60 max-w-xl mx-auto mb-10">
-            Schedule a virtual tour of our facility or request samples to experience 
-            our craftsmanship firsthand.
+          <p className="reveal stagger-1 mx-auto mb-10 max-w-xl text-charcoal/60">
+            Schedule a virtual tour of our facility or request samples to experience our
+            craftsmanship firsthand.
           </p>
-          <div className="reveal stagger-2 flex flex-col sm:flex-row gap-4 justify-center">
+          <div className="reveal stagger-2 flex flex-col justify-center gap-4 sm:flex-row">
             <Link href="/#quote" className="btn-premium group">
               <span>Request Samples</span>
               <span className="btn-premium-icon">
-                <PiArrowRight className="w-4 h-4" />
+                <PiArrowRight className="h-4 w-4" />
               </span>
             </Link>
-            <Link href="/gallery" className="btn-secondary-premium">
-              <span>View Gallery</span>
+            <Link href="/products" className="btn-secondary-premium">
+              <span>View Products</span>
             </Link>
           </div>
         </div>

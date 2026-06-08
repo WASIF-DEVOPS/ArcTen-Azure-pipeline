@@ -37,13 +37,17 @@ export default function Footer() {
           <div className="md:col-span-2">
             <h4 className="text-[11px] uppercase tracking-[0.2em] text-accent mb-6">Navigate</h4>
             <ul className="space-y-3">
-              {['About', 'Gallery', 'Manufacturing'].map((item) => (
-                <li key={item}>
+              {[
+                { label: 'About', href: '/about' },
+                { label: 'Products', href: '/products' },
+                { label: 'Manufacturing', href: '/manufacturing' },
+              ].map((item) => (
+                <li key={item.label}>
                   <Link 
-                    href={`/${item.toLowerCase()}`} 
+                    href={item.href} 
                     className="text-sm text-white/50 hover:text-white transition-colors duration-300"
                   >
-                    {item}
+                    {item.label}
                   </Link>
                 </li>
               ))}
@@ -54,13 +58,18 @@ export default function Footer() {
           <div className="md:col-span-2">
             <h4 className="text-[11px] uppercase tracking-[0.2em] text-accent mb-6">Products</h4>
             <ul className="space-y-3">
-              {['Leather Jackets', 'Leather Bags', 'Custom Orders', 'White Label'].map((item) => (
-                <li key={item}>
+              {[
+                { label: 'Leather Jackets', href: '/products?c=men' },
+                { label: 'Leather Bags', href: '/products?c=bags' },
+                { label: 'Custom Orders', href: '/#quote' },
+                { label: 'White Label', href: '/#quote' },
+              ].map((item) => (
+                <li key={item.label}>
                   <Link 
-                    href="/gallery" 
+                    href={item.href} 
                     className="text-sm text-white/50 hover:text-white transition-colors duration-300"
                   >
-                    {item}
+                    {item.label}
                   </Link>
                 </li>
               ))}
