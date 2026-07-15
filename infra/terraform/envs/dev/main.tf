@@ -48,7 +48,7 @@ module "eks" {
   node_role_arn      = module.iam.eks_node_role_arn
 
   # Dev sizing — small, cost-effective Spot nodes
-  kubernetes_version = "1.29"
+  kubernetes_version = "1.31"
   node_instance_type = "t3.medium"
   capacity_type      = "SPOT"
   node_desired_count = 1
@@ -80,8 +80,9 @@ module "documentdb" {
   master_password            = var.docdb_master_password
 
   # Dev sizing — single instance, small
-  instance_class = "db.t3.medium"
-  instance_count = 1
+  instance_class        = "db.t3.medium"
+  instance_count        = 1
+  backup_retention_days = 1
 
   tags = local.common_tags
 }
@@ -108,9 +109,10 @@ module "rds" {
   admin_password             = var.rds_admin_password
 
   # Dev sizing — smallest SQL Server
-  instance_class    = "db.t3.small"
-  allocated_storage = 20
-  multi_az          = false
+  instance_class        = "db.t3.small"
+  allocated_storage     = 20
+  multi_az              = false
+  backup_retention_days = 1
 
   tags = local.common_tags
 }

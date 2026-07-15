@@ -1,12 +1,13 @@
 # ============================================================
-# Prod Environment — Remote Backend Configuration
+# ARCTen — Prod Environment Remote Backend (S3 + DynamoDB)
 # ============================================================
 
-terraform {
-  backend "azurerm" {
-    resource_group_name  = "rg-terraform-state"
-    storage_account_name = "sttfstatewasif"
-    container_name       = "tfstate-dataplatform"
-    key                  = "prod.terraform.tfstate"
-  }
-}
+# terraform {
+#   backend "s3" {
+#     bucket         = "arcten-terraform-state"
+#     key            = "prod/terraform.tfstate"
+#     region         = "us-east-1"
+#     dynamodb_table = "arcten-terraform-locks"
+#     encrypt        = true
+#   }
+# }
