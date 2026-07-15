@@ -1,0 +1,162 @@
+# ================================================================
+# ARCTen Infrastructure Pipeline (Terraform Plan & Apply)
+# Replaces: pipelines/infra-pipeline.yml (Azure DevOps — was empty)
+# Triggers on: changes under infra/terraform/
+# ================================================================
+
+name: '🏗️ Infrastructure (Terraform)'
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+    paths:
+      - 'infra/terraform/**'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'infra/terraform/**'
+
+env:
+  AWS_REGION: us-east-1
+  TF_VERSION: '1.7.0'
+
+jobs:
+  # ── TERRAFORM PLAN (runs on every push/PR) ───────────────────
+  plan:
+    name: '📋 Terraform Plan'
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    strategy:
+      matrix:
+        environment: [dev, prod]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Fetch Secrets from AWS Secrets Manager
+        uses: aws-actions/aws-secretsmanager-get-secrets@v2
+        with:
+          secret-ids: |
+            arcten/${{ matrix.environment }}/bootstrap-secrets
+          parse-json-secrets: true
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+
+      - name: Terraform Init
+        working-directory: infra/terraform/envs/${{ matrix.environment }}
+        run: terraform init
+
+      - name: Terraform Validate
+        working-directory: infra/terraform/envs/${{ matrix.environment }}
+        run: terraform validate
+
+      - name: Terraform Plan
+        working-directory: infra/terraform/envs/${{ matrix.environment }}
+        run: terraform plan -no-color -out=tfplan
+        env:
+          TF_VAR_docdb_master_password: ${{ env.DOCDB_PASSWORD }}
+          TF_VAR_rds_admin_password: ${{ env.RDS_PASSWORD }}
+          TF_VAR_jwt_secret: ${{ env.JWT_SECRET }}
+          TF_VAR_admin_password: ${{ env.ADMIN_PASSWORD }}
+
+  # ── TERRAFORM APPLY (only on main, with approval) ───────────
+  apply-dev:
+    name: '🚀 Apply Dev Infrastructure'
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    needs: plan
+    if: github.ref == 'refs/heads/develop' && github.event_name == 'push'
+    environment: development
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Fetch Secrets from AWS Secrets Manager
+        uses: aws-actions/aws-secretsmanager-get-secrets@v2
+        with:
+          secret-ids: |
+            arcten/dev/bootstrap-secrets
+          parse-json-secrets: true
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+
+      - name: Terraform Init & Apply (Dev)
+        working-directory: infra/terraform/envs/dev
+        run: |
+          terraform init
+          terraform apply -auto-approve
+        env:
+          TF_VAR_docdb_master_password: ${{ env.DOCDB_PASSWORD }}
+          TF_VAR_rds_admin_password: ${{ env.RDS_PASSWORD }}
+          TF_VAR_jwt_secret: ${{ env.JWT_SECRET }}
+          TF_VAR_admin_password: ${{ env.ADMIN_PASSWORD }}
+
+  apply-prod:
+    name: '🚀 Apply Prod Infrastructure'
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    needs: plan
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    environment: production  # ⏸️ Requires manual approval
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Fetch Secrets from AWS Secrets Manager
+        uses: aws-actions/aws-secretsmanager-get-secrets@v2
+        with:
+          secret-ids: |
+            arcten/prod/bootstrap-secrets
+          parse-json-secrets: true
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+
+      - name: Terraform Init & Apply (Prod)
+        working-directory: infra/terraform/envs/prod
+        run: |
+          terraform init
+          terraform apply -auto-approve
+        env:
+          TF_VAR_docdb_master_password: ${{ env.DOCDB_PASSWORD }}
+          TF_VAR_rds_admin_password: ${{ env.RDS_PASSWORD }}
+          TF_VAR_jwt_secret: ${{ env.JWT_SECRET }}
+          TF_VAR_admin_password: ${{ env.ADMIN_PASSWORD }}

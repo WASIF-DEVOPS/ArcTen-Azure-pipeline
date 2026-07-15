@@ -1,5 +1,5 @@
 # ============================================================
-# ARCTen — Dev Environment Variables
+# ARCTen — Prod Environment Variables
 # ============================================================
 
 variable "aws_region" {
@@ -13,7 +13,6 @@ variable "unique_suffix" {
   type        = string
 }
 
-# ── Sensitive Variables (from terraform.tfvars or CI/CD) ─────
 variable "docdb_master_password" {
   description = "Master password for DocumentDB"
   type        = string

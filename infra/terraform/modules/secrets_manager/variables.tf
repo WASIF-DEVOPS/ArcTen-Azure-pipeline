@@ -1,0 +1,44 @@
+# ============================================================
+# Secrets Manager Module — Variables
+# ============================================================
+
+variable "project" {
+  description = "Project name used for resource naming"
+  type        = string
+  default     = "arcten"
+}
+
+variable "environment" {
+  description = "Environment name (dev, prod)"
+  type        = string
+}
+
+variable "mongodb_uri" {
+  description = "DocumentDB MongoDB connection string"
+  type        = string
+  sensitive   = true
+}
+
+variable "jwt_secret" {
+  description = "JWT signing secret"
+  type        = string
+  sensitive   = true
+}
+
+variable "admin_password" {
+  description = "Admin dashboard password"
+  type        = string
+  sensitive   = true
+}
+
+variable "rds_password" {
+  description = "RDS SQL Server admin password"
+  type        = string
+  sensitive   = true
+}
+
+variable "tags" {
+  description = "Common tags for all resources"
+  type        = map(string)
+  default     = {}
+}

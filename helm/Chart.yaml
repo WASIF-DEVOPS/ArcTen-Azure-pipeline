@@ -1,0 +1,6 @@
+apiVersion: v2
+name: arcten
+description: A Helm chart for deploying the ARCTen B2B Leather Manufacturing Application (Frontend + Backend)
+type: application
+version: 1.0.0
+appVersion: "1.0.0"

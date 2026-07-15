@@ -1,0 +1,18 @@
+# ============================================================
+# IAM Module — Outputs
+# ============================================================
+
+output "eks_cluster_role_arn" {
+  description = "ARN of the EKS cluster IAM role"
+  value       = aws_iam_role.eks_cluster.arn
+}
+
+output "eks_node_role_arn" {
+  description = "ARN of the EKS node group IAM role"
+  value       = aws_iam_role.eks_nodes.arn
+}
+
+output "glue_role_arn" {
+  description = "ARN of the Glue service IAM role"
+  value       = aws_iam_role.glue.arn
+}

@@ -1,0 +1,169 @@
+# ================================================================
+# ARCTen Application Pipeline (Docker Build & EKS Helm Deploy)
+# Replaces: pipelines/app-pipeline.yml (Azure DevOps)
+# Triggers on: code modifications under backend/, frontend/, or helm/
+# ================================================================
+
+name: '📦 Build & Deploy Application'
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+    paths:
+      - 'backend/**'
+      - 'frontend/**'
+      - 'helm/**'
+      - 'docker/**'
+
+env:
+  AWS_REGION: us-east-1
+  EKS_CLUSTER_DEV: arcten-eks-dev
+  EKS_CLUSTER_PROD: arcten-eks-prod
+
+jobs:
+  # ── STAGE 1: BUILD & PUSH DOCKER IMAGES ──────────────────────
+  build:
+    name: '📦 Build & Push to ECR'
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    outputs:
+      image_tag: ${{ steps.meta.outputs.sha_short }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set image tag
+        id: meta
+        run: echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: ecr-login
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build & Push Backend Image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./backend
+          file: ./docker/backend.Dockerfile
+          push: true
+          tags: |
+            ${{ steps.ecr-login.outputs.registry }}/arcten-backend:${{ steps.meta.outputs.sha_short }}
+            ${{ steps.ecr-login.outputs.registry }}/arcten-backend:latest
+
+      - name: Build & Push Frontend Image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./frontend
+          file: ./docker/frontend.Dockerfile
+          push: true
+          build-args: |
+            NEXT_PUBLIC_API_URL=${{ secrets.NEXT_PUBLIC_API_URL }}
+          tags: |
+            ${{ steps.ecr-login.outputs.registry }}/arcten-frontend:${{ steps.meta.outputs.sha_short }}
+            ${{ steps.ecr-login.outputs.registry }}/arcten-frontend:latest
+
+  # ── STAGE 2: DEPLOY TO DEV ──────────────────────────────────
+  deploy-dev:
+    name: '🚀 Deploy to Dev Namespace'
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    needs: build
+    if: github.ref == 'refs/heads/develop'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Fetch Secrets from AWS Secrets Manager
+        uses: aws-actions/aws-secretsmanager-get-secrets@v2
+        with:
+          secret-ids: |
+            arcten/dev/bootstrap-secrets
+          parse-json-secrets: true
+
+      - name: Login to Amazon ECR
+        id: ecr-login
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Update kubeconfig for EKS
+        run: aws eks update-kubeconfig --name ${{ env.EKS_CLUSTER_DEV }} --region ${{ env.AWS_REGION }}
+
+      - name: Deploy with Helm (Dev)
+        run: |
+          helm upgrade --install arcten ./helm \
+            --namespace dev-ns \
+            --create-namespace \
+            -f helm/values-dev.yaml \
+            --set imageCredentials.registry=${{ steps.ecr-login.outputs.registry }} \
+            --set backend.image.tag=${{ needs.build.outputs.image_tag }} \
+            --set frontend.image.tag=${{ needs.build.outputs.image_tag }} \
+            --set secrets.mongodbUri="${{ env.MONGODB_URI }}" \
+            --set secrets.jwtSecret="${{ env.JWT_SECRET }}" \
+            --set secrets.adminPassword="${{ env.ADMIN_PASSWORD }}"
+
+  # ── STAGE 3: DEPLOY TO PROD (with approval gate) ────────────
+  deploy-prod:
+    name: '🚀 Deploy to Prod Namespace'
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    needs: build
+    if: github.ref == 'refs/heads/main'
+    environment: production  # ⏸️ Requires manual approval
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Fetch Secrets from AWS Secrets Manager
+        uses: aws-actions/aws-secretsmanager-get-secrets@v2
+        with:
+          secret-ids: |
+            arcten/prod/bootstrap-secrets
+          parse-json-secrets: true
+
+      - name: Login to Amazon ECR
+        id: ecr-login
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Update kubeconfig for EKS
+        run: aws eks update-kubeconfig --name ${{ env.EKS_CLUSTER_PROD }} --region ${{ env.AWS_REGION }}
+
+      - name: Deploy with Helm (Prod)
+        run: |
+          helm upgrade --install arcten ./helm \
+            --namespace prod-ns \
+            --create-namespace \
+            -f helm/values-prod.yaml \
+            --set imageCredentials.registry=${{ steps.ecr-login.outputs.registry }} \
+            --set backend.image.tag=${{ needs.build.outputs.image_tag }} \
+            --set frontend.image.tag=${{ needs.build.outputs.image_tag }} \
+            --set secrets.mongodbUri="${{ env.MONGODB_URI }}" \
+            --set secrets.jwtSecret="${{ env.JWT_SECRET }}" \
+            --set secrets.adminPassword="${{ env.ADMIN_PASSWORD }}"

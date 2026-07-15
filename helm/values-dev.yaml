@@ -1,0 +1,37 @@
+# ============================================================
+# Development Environment Overrides
+# ============================================================
+
+global:
+  environment: dev
+
+backend:
+  replicaCount: 1
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 250m
+      memory: 256Mi
+
+frontend:
+  replicaCount: 1
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 250m
+      memory: 256Mi
+
+ingress:
+  hosts:
+    - host: dev.arcten.local
+      paths:
+        - path: /api(/|$)(.*)
+          pathType: Prefix
+          backend: backend
+        - path: /(.*)
+          pathType: Prefix
+          backend: frontend

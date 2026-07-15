@@ -1,0 +1,73 @@
+# ============================================================
+# ARCTen — Local Development Stack
+# Runs: Frontend + Backend + MongoDB
+# Usage: docker compose -f docker/docker-compose.yml up --build
+# ============================================================
+
+version: '3.8'
+
+services:
+  # ── MongoDB ──────────────────────────────────────────────────
+  mongo:
+    image: mongo:7
+    container_name: arcten-mongo
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_DATABASE: arcten
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - arcten-network
+
+  # ── Backend API ──────────────────────────────────────────────
+  backend:
+    build:
+      context: ../backend
+      dockerfile: ../docker/backend.Dockerfile
+    container_name: arcten-backend
+    ports:
+      - "5000:5000"
+    environment:
+      PORT: 5000
+      MONGODB_URI: mongodb://mongo:27017/arcten
+      JWT_SECRET: dev-jwt-secret-change-in-prod
+      ADMIN_EMAIL: admin@arcten.com
+      ADMIN_PASSWORD: admin123
+      FRONTEND_URL: http://localhost:3000
+      # SMTP — uncomment and fill for email notifications
+      # SMTP_HOST: smtp.gmail.com
+      # SMTP_PORT: 587
+      # SMTP_USER: your-email@gmail.com
+      # SMTP_PASS: your-app-password
+    depends_on:
+      - mongo
+    networks:
+      - arcten-network
+    restart: unless-stopped
+
+  # ── Frontend ─────────────────────────────────────────────────
+  frontend:
+    build:
+      context: ../frontend
+      dockerfile: ../docker/frontend.Dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: http://localhost:5000
+    container_name: arcten-frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    networks:
+      - arcten-network
+    restart: unless-stopped
+
+# ── Volumes ──────────────────────────────────────────────────
+volumes:
+  mongo-data:
+    driver: local
+
+# ── Network ──────────────────────────────────────────────────
+networks:
+  arcten-network:
+    driver: bridge

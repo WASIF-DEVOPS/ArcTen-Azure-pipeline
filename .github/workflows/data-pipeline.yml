@@ -1,0 +1,115 @@
+# ================================================================
+# ARCTen Data Pipeline (ETL Trigger)
+# Replaces: pipelines/data-pipeline.yml (Azure DevOps)
+# Triggers on: changes under data/
+# ================================================================
+
+name: '📊 Data Pipeline (ETL)'
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'data/**'
+  workflow_dispatch:  # Allow manual triggers
+
+env:
+  AWS_REGION: us-east-1
+
+jobs:
+  # ── Upload Glue Scripts to S3 ────────────────────────────────
+  upload-scripts:
+    name: '📤 Upload Glue Scripts to S3'
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Fetch Secrets from AWS Secrets Manager
+        uses: aws-actions/aws-secretsmanager-get-secrets@v2
+        with:
+          secret-ids: |
+            arcten/prod/bootstrap-secrets
+          parse-json-secrets: true
+
+      - name: Upload Glue job scripts to S3
+        run: |
+          aws s3 cp data/glue-jobs/ s3://${{ env.DATALAKE_BUCKET }}/glue-jobs/ --recursive
+
+  # ── Run Python Ingestion Scripts ─────────────────────────────
+  run-ingestion:
+    name: '🔄 Run Data Ingestion'
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    needs: upload-scripts
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install -r data/ingestion/requirements.txt
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Fetch Secrets from AWS Secrets Manager
+        uses: aws-actions/aws-secretsmanager-get-secrets@v2
+        with:
+          secret-ids: |
+            arcten/prod/bootstrap-secrets
+          parse-json-secrets: true
+
+      - name: Export Quotes to S3 Data Lake
+        run: python data/ingestion/export-quotes-to-lake.py
+        env:
+          MONGODB_URI: ${{ env.MONGODB_URI }}
+          AWS_S3_BUCKET: ${{ env.DATALAKE_BUCKET }}
+
+      - name: Export Products to S3 Data Lake
+        run: python data/ingestion/export-products-to-lake.py
+        env:
+          MONGODB_URI: ${{ env.MONGODB_URI }}
+          AWS_S3_BUCKET: ${{ env.DATALAKE_BUCKET }}
+
+  # ── Trigger Glue ETL Jobs ────────────────────────────────────
+  trigger-glue:
+    name: '⚡ Trigger Glue ETL Jobs'
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    needs: run-ingestion
+
+    steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Start Glue Job — S3 to RDS
+        run: |
+          aws glue start-job-run --job-name arcten-s3-to-rds-prod
+          echo "Glue ETL job triggered successfully"

@@ -1,0 +1,90 @@
+# ============================================================
+# Default Values for ARCTen Helm Chart
+# ============================================================
+
+global:
+  environment: dev
+
+# ── Backend Configuration ────────────────────────────────────
+backend:
+  replicaCount: 1
+  image:
+    repository: arcten-backend
+    tag: latest
+    pullPolicy: Always
+  
+  port: 5000
+  
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+      
+  autoscaling:
+    enabled: true
+    minReplicas: 1
+    maxReplicas: 5
+    targetCPUUtilizationPercentage: 70
+    
+  livenessProbe:
+    initialDelaySeconds: 15
+    periodSeconds: 20
+  readinessProbe:
+    initialDelaySeconds: 10
+    periodSeconds: 10
+
+  # Config values injected into backend deployment
+  config:
+    nodeEnv: production
+    frontendUrl: http://localhost:3000
+
+# ── Frontend Configuration ───────────────────────────────────
+frontend:
+  replicaCount: 1
+  image:
+    repository: arcten-frontend
+    tag: latest
+    pullPolicy: Always
+    
+  port: 3000
+  
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+
+# ── Registry Configuration ───────────────────────────────────
+imageCredentials:
+  registry: 123456789012.dkr.ecr.us-east-1.amazonaws.com
+  username: ""
+  password: ""
+
+# ── Database & Secrets Configuration ──────────────────────────
+secrets:
+  mongodbUri: ""
+  jwtSecret: ""
+  adminEmail: "admin@arcten.com"
+  adminPassword: ""
+
+# ── Ingress Configuration ────────────────────────────────────
+ingress:
+  enabled: true
+  className: nginx
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    nginx.ingress.kubernetes.io/use-regex: "true"
+  hosts:
+    - host: chart-example.local
+      paths:
+        - path: /api(/|$)(.*)
+          pathType: Prefix
+          backend: backend
+        - path: /(.*)
+          pathType: Prefix
+          backend: frontend

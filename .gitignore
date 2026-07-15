@@ -31,3 +31,21 @@ Thumbs.db
 
 # TypeScript
 *.tsbuildinfo
+
+# Docker
+docker/mongo-data/
+
+# Terraform
+**/.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+!*.tfvars.example
+.terraform.lock.hcl
+crash.log
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+

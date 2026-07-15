@@ -1,0 +1,12 @@
+node_modules
+.next
+.git
+.env
+.env.local
+.env.*.local
+*.md
+.DS_Store
+Thumbs.db
+.vscode
+.idea
+npm-debug.log*

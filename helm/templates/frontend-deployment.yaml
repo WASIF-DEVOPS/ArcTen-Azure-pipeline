@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "arcten.fullname" . }}-frontend
+  labels:
+    {{- include "arcten.labels" . | nindent 4 }}
+    app: {{ include "arcten.fullname" . }}-frontend
+spec:
+  replicas: {{ .Values.frontend.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ include "arcten.fullname" . }}-frontend
+  template:
+    metadata:
+      labels:
+        app: {{ include "arcten.fullname" . }}-frontend
+    spec:
+      containers:
+        - name: frontend
+          image: "{{ .Values.imageCredentials.registry }}/{{ .Values.frontend.image.repository }}:{{ .Values.frontend.image.tag }}"
+          imagePullPolicy: {{ .Values.frontend.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.frontend.port }}
+          envFrom:
+            - configMapRef:
+                name: {{ include "arcten.fullname" . }}-config
+          resources:
+            {{- toYaml .Values.frontend.resources | nindent 12 }}

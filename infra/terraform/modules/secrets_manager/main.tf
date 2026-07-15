@@ -1,0 +1,65 @@
+# ============================================================
+# ARCTen — Secrets Manager Module (AWS)
+# Creates secrets for application credentials
+# Replaces: Azure Key Vault
+# ============================================================
+
+resource "aws_secretsmanager_secret" "mongodb_uri" {
+  name                    = "${var.project}/${var.environment}/mongodb-uri"
+  description             = "DocumentDB connection string for ARCTen ${var.environment}"
+  recovery_window_in_days = var.environment == "prod" ? 30 : 0
+
+  tags = merge(var.tags, {
+    Name = "${var.project}-mongodb-uri-${var.environment}"
+  })
+}
+
+resource "aws_secretsmanager_secret_version" "mongodb_uri" {
+  secret_id     = aws_secretsmanager_secret.mongodb_uri.id
+  secret_string = var.mongodb_uri
+}
+
+resource "aws_secretsmanager_secret" "jwt_secret" {
+  name                    = "${var.project}/${var.environment}/jwt-secret"
+  description             = "JWT signing secret for ARCTen ${var.environment}"
+  recovery_window_in_days = var.environment == "prod" ? 30 : 0
+
+  tags = merge(var.tags, {
+    Name = "${var.project}-jwt-secret-${var.environment}"
+  })
+}
+
+resource "aws_secretsmanager_secret_version" "jwt_secret" {
+  secret_id     = aws_secretsmanager_secret.jwt_secret.id
+  secret_string = var.jwt_secret
+}
+
+resource "aws_secretsmanager_secret" "admin_password" {
+  name                    = "${var.project}/${var.environment}/admin-password"
+  description             = "Admin dashboard password for ARCTen ${var.environment}"
+  recovery_window_in_days = var.environment == "prod" ? 30 : 0
+
+  tags = merge(var.tags, {
+    Name = "${var.project}-admin-password-${var.environment}"
+  })
+}
+
+resource "aws_secretsmanager_secret_version" "admin_password" {
+  secret_id     = aws_secretsmanager_secret.admin_password.id
+  secret_string = var.admin_password
+}
+
+resource "aws_secretsmanager_secret" "rds_password" {
+  name                    = "${var.project}/${var.environment}/rds-password"
+  description             = "RDS SQL Server admin password for ARCTen ${var.environment}"
+  recovery_window_in_days = var.environment == "prod" ? 30 : 0
+
+  tags = merge(var.tags, {
+    Name = "${var.project}-rds-password-${var.environment}"
+  })
+}
+
+resource "aws_secretsmanager_secret_version" "rds_password" {
+  secret_id     = aws_secretsmanager_secret.rds_password.id
+  secret_string = var.rds_password
+}

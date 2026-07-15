@@ -1,5 +1,5 @@
 # ============================================================
-# ARCTen — Dev Environment Provider Configuration
+# ARCTen — Prod Environment Provider Configuration
 # ============================================================
 
 terraform {
@@ -19,7 +19,7 @@ provider "aws" {
   default_tags {
     tags = {
       Project     = "arcten"
-      Environment = "dev"
+      Environment = "prod"
       ManagedBy   = "terraform"
     }
   }
