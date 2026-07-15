@@ -16,6 +16,7 @@ on:
       - 'frontend/**'
       - 'helm/**'
       - 'docker/**'
+  workflow_dispatch: # Enable manual execution from GitHub UI
 
 env:
   AWS_REGION: us-east-1
