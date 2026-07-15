@@ -28,8 +28,8 @@ output "ecr_frontend_url" {
 }
 
 output "documentdb_endpoint" {
-  description = "DocumentDB cluster endpoint"
-  value       = module.documentdb.cluster_endpoint
+  description = "DocumentDB cluster endpoint (pointing to in-cluster mongo pod for dev)"
+  value       = "mongo.dev-ns.svc.cluster.local"
 }
 
 output "rds_endpoint" {

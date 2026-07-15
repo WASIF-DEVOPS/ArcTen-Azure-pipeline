@@ -47,10 +47,10 @@ module "eks" {
   cluster_role_arn   = module.iam.eks_cluster_role_arn
   node_role_arn      = module.iam.eks_node_role_arn
 
-  # Dev sizing — small, cost-effective Spot nodes
+  # Dev sizing — small, cost-effective Free Tier nodes
   kubernetes_version = "1.31"
-  node_instance_type = "t3.medium"
-  capacity_type      = "SPOT"
+  node_instance_type = "t3.micro"
+  capacity_type      = "ON_DEMAND"
   node_desired_count = 1
   node_min_count     = 1
   node_max_count     = 2
@@ -68,24 +68,20 @@ module "ecr" {
   tags                  = local.common_tags
 }
 
-# ── 5. DocumentDB (MongoDB) ─────────────────────────────────
-module "documentdb" {
-  source = "../../modules/documentdb"
-
-  project                    = local.project
-  environment                = local.environment
-  vpc_id                     = module.vpc.vpc_id
-  private_subnet_ids         = module.vpc.private_subnet_ids
-  allowed_security_group_ids = [module.eks.cluster_security_group_id]
-  master_password            = var.docdb_master_password
-
-  # Dev sizing — single instance, small
-  instance_class        = "db.t3.medium"
-  instance_count        = 1
-  backup_retention_days = 1
-
-  tags = local.common_tags
-}
+# ── 5. DocumentDB (MongoDB) — DISABLED FOR DEV FREE PLAN ─────
+# module "documentdb" {
+#   source = "../../modules/documentdb"
+#   project                    = local.project
+#   environment                = local.environment
+#   vpc_id                     = module.vpc.vpc_id
+#   private_subnet_ids         = module.vpc.private_subnet_ids
+#   allowed_security_group_ids = [module.eks.cluster_security_group_id]
+#   master_password            = var.docdb_master_password
+#   instance_class             = "db.t3.medium"
+#   instance_count             = 1
+#   backup_retention_days      = 1
+#   tags                       = local.common_tags
+# }
 
 # ── 6. S3 Data Lake ─────────────────────────────────────────
 module "s3" {
@@ -108,8 +104,8 @@ module "rds" {
   allowed_security_group_ids = [module.eks.cluster_security_group_id]
   admin_password             = var.rds_admin_password
 
-  # Dev sizing — smallest SQL Server
-  instance_class        = "db.t3.small"
+  # Dev sizing — Free Tier eligible SQL Server
+  instance_class        = "db.t3.micro"
   allocated_storage     = 20
   multi_az              = false
   backup_retention_days = 1
@@ -126,7 +122,7 @@ module "glue" {
   glue_role_arn           = module.iam.glue_role_arn
   glue_scripts_bucket     = module.s3.bucket_id
   datalake_bucket_name    = module.s3.bucket_id
-  docdb_connection_string = module.documentdb.connection_string
+  docdb_connection_string = "mongodb://mongo.dev-ns.svc.cluster.local:27017/arcten"
   rds_jdbc_url            = "jdbc:sqlserver://${module.rds.endpoint};databaseName=arctendw"
   rds_username            = "sqladmin"
   rds_password            = var.rds_admin_password
@@ -139,7 +135,7 @@ module "secrets" {
 
   project        = local.project
   environment    = local.environment
-  mongodb_uri    = module.documentdb.connection_string
+  mongodb_uri    = "mongodb://mongo.dev-ns.svc.cluster.local:27017/arcten"
   jwt_secret     = var.jwt_secret
   admin_password = var.admin_password
   rds_password   = var.rds_admin_password
