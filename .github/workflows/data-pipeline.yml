@@ -93,9 +93,9 @@ jobs:
           MONGODB_URI: ${{ env.MONGODB_URI }}
           AWS_S3_BUCKET: ${{ env.DATALAKE_BUCKET }}
 
-  # ── Trigger Glue ETL Jobs ────────────────────────────────────
-  trigger-glue:
-    name: '⚡ Trigger Glue ETL Jobs'
+  # ── Run Python ETL Sync (Bypasses AWS Glue) ──────────────────
+  run-etl:
+    name: '⚡ Run Python ETL Sync'
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -103,13 +103,33 @@ jobs:
     needs: run-ingestion
 
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install -r data/ingestion/requirements.txt
+
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
           aws-region: ${{ env.AWS_REGION }}
 
-      - name: Start Glue Job — S3 to RDS
-        run: |
-          aws glue start-job-run --job-name arcten-s3-to-rds-prod
-          echo "Glue ETL job triggered successfully"
+      - name: Fetch Secrets from AWS Secrets Manager
+        uses: aws-actions/aws-secretsmanager-get-secrets@v2
+        with:
+          secret-ids: |
+            arcten/prod/bootstrap-secrets
+          parse-json-secrets: true
+
+      - name: Run ETL Sync Script
+        run: python data/ingestion/run-etl.py
+        env:
+          AWS_S3_BUCKET: ${{ env.DATALAKE_BUCKET }}
+          RDS_HOST: ${{ env.RDS_HOST }}
+          RDS_PASS: ${{ env.RDS_PASSWORD }}

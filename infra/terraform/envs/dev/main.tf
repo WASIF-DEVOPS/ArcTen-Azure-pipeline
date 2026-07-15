@@ -113,21 +113,20 @@ module "rds" {
   tags = local.common_tags
 }
 
-# ── 8. AWS Glue (ETL) ───────────────────────────────────────
-module "glue" {
-  source = "../../modules/glue"
-
-  project                 = local.project
-  environment             = local.environment
-  glue_role_arn           = module.iam.glue_role_arn
-  glue_scripts_bucket     = module.s3.bucket_id
-  datalake_bucket_name    = module.s3.bucket_id
-  docdb_connection_string = "mongodb://mongo.dev-ns.svc.cluster.local:27017/arcten"
-  rds_jdbc_url            = "jdbc:sqlserver://${module.rds.endpoint};databaseName=arctendw"
-  rds_username            = "sqladmin"
-  rds_password            = var.rds_admin_password
-  tags                    = local.common_tags
-}
+# ── 8. AWS Glue (ETL) — DISABLED FOR DEV FREE PLAN ───────────
+# module "glue" {
+#   source                  = "../../modules/glue"
+#   project                 = local.project
+#   environment             = local.environment
+#   glue_role_arn           = module.iam.glue_role_arn
+#   glue_scripts_bucket     = module.s3.bucket_id
+#   datalake_bucket_name    = module.s3.bucket_id
+#   docdb_connection_string = "mongodb://mongo.dev-ns.svc.cluster.local:27017/arcten"
+#   rds_jdbc_url            = "jdbc:sqlserver://${module.rds.endpoint};databaseName=arctendw"
+#   rds_username            = "sqladmin"
+#   rds_password            = var.rds_admin_password
+#   tags                    = local.common_tags
+# }
 
 # ── 9. Secrets Manager ──────────────────────────────────────
 module "secrets" {
