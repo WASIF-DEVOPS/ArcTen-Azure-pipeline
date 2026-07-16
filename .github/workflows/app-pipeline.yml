@@ -258,15 +258,15 @@ jobs:
         uses: aws-actions/aws-secretsmanager-get-secrets@v2
         with:
           secret-ids: |
-            arcten/prod/bootstrap-secrets
+            arcten/dev/bootstrap-secrets   # Using dev secrets (prod infra not yet deployed)
           parse-json-secrets: true
 
       - name: Login to Amazon ECR
         id: ecr-login
         uses: aws-actions/amazon-ecr-login@v2
 
-      - name: Update kubeconfig for EKS Prod
-        run: aws eks update-kubeconfig --name ${{ env.EKS_CLUSTER_PROD }} --region ${{ env.AWS_REGION }}
+      - name: Update kubeconfig for EKS
+        run: aws eks update-kubeconfig --name ${{ env.EKS_CLUSTER_DEV }} --region ${{ env.AWS_REGION }}
 
       - name: Helm Deploy to Prod Namespace
         run: |
