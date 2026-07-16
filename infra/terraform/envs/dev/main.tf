@@ -51,9 +51,9 @@ module "eks" {
   kubernetes_version = "1.31"
   node_instance_type = "t3.micro"
   capacity_type      = "ON_DEMAND"
-  node_desired_count = 1
+  node_desired_count = 2
   node_min_count     = 1
-  node_max_count     = 2
+  node_max_count     = 3
 
   tags = local.common_tags
 }
