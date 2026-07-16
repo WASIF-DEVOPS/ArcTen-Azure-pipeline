@@ -18,12 +18,13 @@ resource "aws_secretsmanager_secret" "bootstrap" {
 resource "aws_secretsmanager_secret_version" "bootstrap" {
   secret_id = aws_secretsmanager_secret.bootstrap.id
   secret_string = jsonencode({
-    MONGODB_URI    = var.mongodb_uri
-    JWT_SECRET     = var.jwt_secret
-    ADMIN_PASSWORD = var.admin_password
-    RDS_PASSWORD   = var.rds_password
-    RDS_HOST       = var.rds_host
-    DATALAKE_BUCKET = var.datalake_bucket
+    MONGODB_URI      = var.mongodb_uri
+    MONGODB_PASSWORD = var.mongodb_password
+    JWT_SECRET       = var.jwt_secret
+    ADMIN_PASSWORD   = var.admin_password
+    RDS_PASSWORD     = var.rds_password
+    RDS_HOST         = var.rds_host
+    DATALAKE_BUCKET   = var.datalake_bucket
   })
 }
 

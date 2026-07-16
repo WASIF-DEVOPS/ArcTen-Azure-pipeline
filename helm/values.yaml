@@ -68,6 +68,7 @@ imageCredentials:
 # ── Database & Secrets Configuration ──────────────────────────
 secrets:
   mongodbUri: ""
+  mongodbPassword: ""
   jwtSecret: ""
   adminEmail: "admin@arcten.com"
   adminPassword: ""

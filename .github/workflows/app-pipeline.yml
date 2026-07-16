@@ -222,6 +222,7 @@ jobs:
             --set backend.image.tag=${{ needs.build.outputs.image_tag }} \
             --set frontend.image.tag=${{ needs.build.outputs.image_tag }} \
             --set secrets.mongodbUri="${{ env.MONGODB_URI }}" \
+            --set secrets.mongodbPassword="${{ env.MONGODB_PASSWORD }}" \
             --set secrets.jwtSecret="${{ env.JWT_SECRET }}" \
             --set secrets.adminPassword="${{ env.ADMIN_PASSWORD }}"
 

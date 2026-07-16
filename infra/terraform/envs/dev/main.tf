@@ -132,15 +132,16 @@ module "rds" {
 module "secrets" {
   source = "../../modules/secrets_manager"
 
-  project        = local.project
-  environment    = local.environment
-  mongodb_uri    = "mongodb://mongo.dev-ns.svc.cluster.local:27017/arcten"
-  jwt_secret     = var.jwt_secret
-  admin_password = var.admin_password
-  rds_password   = var.rds_admin_password
-  rds_host       = module.rds.endpoint
-  datalake_bucket = module.s3.bucket_id
-  tags           = local.common_tags
+  project          = local.project
+  environment      = local.environment
+  mongodb_uri      = "mongodb://admin:${var.docdb_master_password}@mongo.dev-ns.svc.cluster.local:27017/arcten?authSource=admin"
+  mongodb_password = var.docdb_master_password
+  jwt_secret       = var.jwt_secret
+  admin_password   = var.admin_password
+  rds_password     = var.rds_admin_password
+  rds_host         = module.rds.endpoint
+  datalake_bucket  = module.s3.bucket_id
+  tags             = local.common_tags
 }
 
 # ── 10. CloudWatch Monitoring ────────────────────────────────

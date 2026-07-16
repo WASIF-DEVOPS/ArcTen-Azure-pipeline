@@ -92,3 +92,13 @@ resource "aws_iam_openid_connect_provider" "eks" {
     Name = "${var.project}-eks-oidc-${var.environment}"
   })
 }
+
+# ── EKS Addons ────────────────────────────────────────────────
+resource "aws_eks_addon" "ebs_csi" {
+  cluster_name = aws_eks_cluster.main.name
+  addon_name   = "aws-ebs-csi-driver"
+
+  tags = merge(var.tags, {
+    Name = "${var.project}-eks-ebs-csi-${var.environment}"
+  })
+}

@@ -19,6 +19,13 @@ variable "mongodb_uri" {
   sensitive   = true
 }
 
+variable "mongodb_password" {
+  description = "MongoDB password for root authentication"
+  type        = string
+  sensitive   = true
+  default     = ""
+}
+
 variable "jwt_secret" {
   description = "JWT signing secret"
   type        = string

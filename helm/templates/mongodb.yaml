@@ -1,8 +1,21 @@
 # ============================================================
-# Local MongoDB Database (In-Cluster for Dev/Test)
-# Replaces: AWS DocumentDB (for Free Tier compatibility)
+# Production-Grade Local MongoDB (In-Cluster AWS EBS Backed)
+# Fully Secure & Persistent Storage Setup
 # ============================================================
 
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mongo-pvc
+  namespace: {{ .Release.Namespace }}
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: gp3  # Standard AWS EBS gp3 storage class managed by EBS CSI addon
+  resources:
+    requests:
+      storage: 10Gi  # Fits comfortably within AWS Free Tier (30GB gp3 allowed per month)
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -25,19 +38,28 @@ spec:
           image: mongo:6.0
           ports:
             - containerPort: 27017
+          env:
+            - name: MONGO_INITDB_ROOT_USERNAME
+              value: admin
+            - name: MONGO_INITDB_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "arcten.fullname" . }}-secrets
+                  key: MONGODB_PASSWORD
           resources:
             requests:
               cpu: 100m
               memory: 128Mi
             limits:
-              cpu: 200m
+              cpu: 250m
               memory: 256Mi
           volumeMounts:
-            - name: mongo-storage
+            - name: mongo-persistent-storage
               mountPath: /data/db
       volumes:
-        - name: mongo-storage
-          emptyDir: {} # Temporary storage for dev (no cloud storage charges)
+        - name: mongo-persistent-storage
+          persistentVolumeClaim:
+            claimName: mongo-pvc
 ---
 apiVersion: v1
 kind: Service
@@ -50,3 +72,24 @@ spec:
       targetPort: 27017
   selector:
     app: mongo
+---
+# ── Network Policy (Restricts MongoDB access strictly to Backend) ──
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: mongo-network-policy
+  namespace: {{ .Release.Namespace }}
+spec:
+  podSelector:
+    matchLabels:
+      app: mongo
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app: {{ include "arcten.fullname" . }}-backend
+      ports:
+        - protocol: TCP
+          port: 27017

@@ -72,6 +72,11 @@ resource "aws_iam_role_policy_attachment" "ecr_read_only" {
   role       = aws_iam_role.eks_nodes.name
 }
 
+resource "aws_iam_role_policy_attachment" "ebs_csi_policy" {
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy"
+  role       = aws_iam_role.eks_nodes.name
+}
+
 # ── Glue Service IAM Role ────────────────────────────────────
 resource "aws_iam_role" "glue" {
   name = "${var.project}-glue-role-${var.environment}"
