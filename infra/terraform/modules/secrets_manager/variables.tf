@@ -37,6 +37,18 @@ variable "rds_password" {
   sensitive   = true
 }
 
+variable "rds_host" {
+  description = "RDS SQL Server endpoint (host:port)"
+  type        = string
+  default     = ""
+}
+
+variable "datalake_bucket" {
+  description = "S3 data lake bucket name"
+  type        = string
+  default     = ""
+}
+
 variable "tags" {
   description = "Common tags for all resources"
   type        = map(string)

@@ -4,6 +4,31 @@
 # Replaces: Azure Key Vault
 # ============================================================
 
+# ── Consolidated Bootstrap Secret (used by GitHub Actions pipeline) ──
+resource "aws_secretsmanager_secret" "bootstrap" {
+  name                    = "${var.project}/${var.environment}/bootstrap-secrets"
+  description             = "Consolidated JSON secret for ARCTen ${var.environment} — fetched by GitHub Actions"
+  recovery_window_in_days = var.environment == "prod" ? 30 : 0
+
+  tags = merge(var.tags, {
+    Name = "${var.project}-bootstrap-secrets-${var.environment}"
+  })
+}
+
+resource "aws_secretsmanager_secret_version" "bootstrap" {
+  secret_id = aws_secretsmanager_secret.bootstrap.id
+  secret_string = jsonencode({
+    MONGODB_URI    = var.mongodb_uri
+    JWT_SECRET     = var.jwt_secret
+    ADMIN_PASSWORD = var.admin_password
+    RDS_PASSWORD   = var.rds_password
+    RDS_HOST       = var.rds_host
+    DATALAKE_BUCKET = var.datalake_bucket
+  })
+}
+
+# ── Individual Secrets (for direct app code access) ──────────
+
 resource "aws_secretsmanager_secret" "mongodb_uri" {
   name                    = "${var.project}/${var.environment}/mongodb-uri"
   description             = "DocumentDB connection string for ARCTen ${var.environment}"
@@ -63,3 +88,4 @@ resource "aws_secretsmanager_secret_version" "rds_password" {
   secret_id     = aws_secretsmanager_secret.rds_password.id
   secret_string = var.rds_password
 }
+
