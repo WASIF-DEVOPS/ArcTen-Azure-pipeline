@@ -258,7 +258,7 @@ jobs:
         uses: aws-actions/aws-secretsmanager-get-secrets@v2
         with:
           secret-ids: |
-            arcten/dev/bootstrap-secrets   # Using dev secrets (prod infra not yet deployed)
+            arcten/dev/bootstrap-secrets
           parse-json-secrets: true
 
       - name: Login to Amazon ECR
