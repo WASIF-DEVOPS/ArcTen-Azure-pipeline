@@ -1,37 +1,43 @@
-output "resource_group_name" {
-  value = module.resource_group.name
+# ============================================================
+# ARCTen — Prod Environment Outputs
+# ============================================================
+
+output "eks_cluster_name" {
+  description = "EKS cluster name"
+  value       = module.eks.cluster_name
 }
 
-output "acr_login_server" {
-  value = module.acr.login_server
+output "eks_cluster_endpoint" {
+  description = "EKS cluster API endpoint"
+  value       = module.eks.cluster_endpoint
 }
 
-output "aks_cluster_name" {
-  value = module.aks.cluster_name
+output "ecr_registry_url" {
+  description = "ECR registry URL"
+  value       = module.ecr.registry_url
 }
 
-output "cosmosdb_connection_string" {
-  value     = module.cosmosdb.connection_string
-  sensitive = true
+output "ecr_backend_url" {
+  description = "ECR backend repository URL"
+  value       = module.ecr.backend_repository_url
 }
 
-output "storage_account_name" {
-  value = module.storage_account.name
+output "ecr_frontend_url" {
+  description = "ECR frontend repository URL"
+  value       = module.ecr.frontend_repository_url
 }
 
-output "sql_server_fqdn" {
-  value = module.sql_database.server_fqdn
+output "documentdb_endpoint" {
+  description = "DocumentDB cluster endpoint (pointing to in-cluster mongo pod for prod)"
+  value       = "mongo.prod-ns.svc.cluster.local"
 }
 
-output "sql_database_connection_string" {
-  value     = module.sql_database.connection_string
-  sensitive = true
+output "rds_endpoint" {
+  description = "RDS SQL Server endpoint"
+  value       = module.rds.endpoint
 }
 
-output "data_factory_name" {
-  value = module.data_factory.name
-}
-
-output "key_vault_uri" {
-  value = module.key_vault.vault_uri
+output "s3_datalake_bucket" {
+  description = "S3 data lake bucket name"
+  value       = module.s3.bucket_id
 }

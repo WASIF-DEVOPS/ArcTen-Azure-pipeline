@@ -47,12 +47,13 @@ module "eks" {
   cluster_role_arn   = module.iam.eks_cluster_role_arn
   node_role_arn      = module.iam.eks_node_role_arn
 
-  # Prod sizing — larger nodes, more capacity
+  # EKS Sizing for Free Tier - 2 small nodes to handle system and app pods
   kubernetes_version = "1.31"
-  node_instance_type = "t3.large"
+  node_instance_type = "t3.micro"
+  capacity_type      = "ON_DEMAND"
   node_desired_count = 2
-  node_min_count     = 2
-  node_max_count     = 4
+  node_min_count     = 1
+  node_max_count     = 3
 
   tags = local.common_tags
 }
@@ -67,24 +68,20 @@ module "ecr" {
   tags                  = local.common_tags
 }
 
-# ── 5. DocumentDB (MongoDB) — High Availability ─────────────
-module "documentdb" {
-  source = "../../modules/documentdb"
-
-  project                    = local.project
-  environment                = local.environment
-  vpc_id                     = module.vpc.vpc_id
-  private_subnet_ids         = module.vpc.private_subnet_ids
-  allowed_security_group_ids = [module.eks.cluster_security_group_id]
-  master_password            = var.docdb_master_password
-
-  # Prod sizing — 2 instances for HA (Multi-AZ)
-  instance_class        = "db.r5.large"
-  instance_count        = 2
-  backup_retention_days = 14
-
-  tags = local.common_tags
-}
+# ── 5. DocumentDB (MongoDB) — DISABLED FOR DEV/PROD FREE PLAN 
+# module "documentdb" {
+#   source                     = "../../modules/documentdb"
+#   project                    = local.project
+#   environment                = local.environment
+#   vpc_id                     = module.vpc.vpc_id
+#   private_subnet_ids         = module.vpc.private_subnet_ids
+#   allowed_security_group_ids = [module.eks.cluster_security_group_id]
+#   master_password            = var.docdb_master_password
+#   instance_class             = "db.r5.large"
+#   instance_count             = 2
+#   backup_retention_days      = 14
+#   tags                       = local.common_tags
+# }
 
 # ── 6. S3 Data Lake ─────────────────────────────────────────
 module "s3" {
@@ -96,7 +93,7 @@ module "s3" {
   tags          = local.common_tags
 }
 
-# ── 7. RDS SQL Server (Data Warehouse) — High Availability ──
+# ── 7. RDS SQL Server (Data Warehouse) — Free Tier HA ───────
 module "rds" {
   source = "../../modules/rds"
 
@@ -107,31 +104,29 @@ module "rds" {
   allowed_security_group_ids = [module.eks.cluster_security_group_id]
   admin_password             = var.rds_admin_password
 
-  # Prod sizing — larger instance, Multi-AZ
-  instance_class        = "db.r5.large"
-  allocated_storage     = 100
-  max_allocated_storage = 500
-  multi_az              = true
-  backup_retention_days = 14
+  # Prod sizing for Free Tier account
+  instance_class        = "db.t3.micro"
+  allocated_storage     = 20
+  multi_az              = false
+  backup_retention_days = 1
 
   tags = local.common_tags
 }
 
-# ── 8. AWS Glue (ETL) ───────────────────────────────────────
-module "glue" {
-  source = "../../modules/glue"
-
-  project                 = local.project
-  environment             = local.environment
-  glue_role_arn           = module.iam.glue_role_arn
-  glue_scripts_bucket     = module.s3.bucket_id
-  datalake_bucket_name    = module.s3.bucket_id
-  docdb_connection_string = module.documentdb.connection_string
-  rds_jdbc_url            = "jdbc:sqlserver://${module.rds.endpoint};databaseName=arctendw"
-  rds_username            = "sqladmin"
-  rds_password            = var.rds_admin_password
-  tags                    = local.common_tags
-}
+# ── 8. AWS Glue (ETL) — DISABLED FOR DEV/PROD FREE PLAN ─────
+# module "glue" {
+#   source                  = "../../modules/glue"
+#   project                 = local.project
+#   environment             = local.environment
+#   glue_role_arn           = module.iam.glue_role_arn
+#   glue_scripts_bucket     = module.s3.bucket_id
+#   datalake_bucket_name    = module.s3.bucket_id
+#   docdb_connection_string = "mongodb://mongo.prod-ns.svc.cluster.local:27017/arcten"
+#   rds_jdbc_url            = "jdbc:sqlserver://${module.rds.endpoint};databaseName=arctendw"
+#   rds_username            = "sqladmin"
+#   rds_password            = var.rds_admin_password
+#   tags                    = local.common_tags
+# }
 
 # ── 9. Secrets Manager ──────────────────────────────────────
 module "secrets" {
@@ -139,10 +134,12 @@ module "secrets" {
 
   project        = local.project
   environment    = local.environment
-  mongodb_uri    = module.documentdb.connection_string
+  mongodb_uri    = "mongodb://mongo.prod-ns.svc.cluster.local:27017/arcten"
   jwt_secret     = var.jwt_secret
   admin_password = var.admin_password
   rds_password   = var.rds_admin_password
+  rds_host       = module.rds.endpoint
+  datalake_bucket = module.s3.bucket_id
   tags           = local.common_tags
 }
 
