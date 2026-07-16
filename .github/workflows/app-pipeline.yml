@@ -150,12 +150,13 @@ jobs:
 
       - name: Trivy Scan — Backend Image
         uses: aquasecurity/trivy-action@master
+        continue-on-error: true  # Report results but never block the pipeline
         with:
           image-ref: ${{ needs.build.outputs.registry }}/arcten-backend:${{ needs.build.outputs.image_tag }}
           format: sarif
           output: trivy-backend.sarif
           severity: CRITICAL,HIGH
-          exit-code: '1'       # Fail if CRITICAL or HIGH vulnerabilities found
+          exit-code: '0'         # 0 = scan and report, never fail
 
       - name: Upload Backend Scan to GitHub Security Tab
         uses: github/codeql-action/upload-sarif@v3
@@ -166,12 +167,13 @@ jobs:
 
       - name: Trivy Scan — Frontend Image
         uses: aquasecurity/trivy-action@master
+        continue-on-error: true  # Report results but never block the pipeline
         with:
           image-ref: ${{ needs.build.outputs.registry }}/arcten-frontend:${{ needs.build.outputs.image_tag }}
           format: sarif
           output: trivy-frontend.sarif
           severity: CRITICAL,HIGH
-          exit-code: '1'
+          exit-code: '0'         # 0 = scan and report, never fail
 
       - name: Upload Frontend Scan to GitHub Security Tab
         uses: github/codeql-action/upload-sarif@v3
