@@ -138,6 +138,8 @@ module "secrets" {
   jwt_secret     = var.jwt_secret
   admin_password = var.admin_password
   rds_password   = var.rds_admin_password
+  rds_host       = module.rds.endpoint
+  datalake_bucket = module.s3.bucket_id
   tags           = local.common_tags
 }
 
