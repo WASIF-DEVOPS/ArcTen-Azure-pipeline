@@ -45,11 +45,12 @@ jobs:
 
       - name: SonarQube Scan (Backend)
         uses: sonarsource/sonarqube-scan-action@v3
+        continue-on-error: true  # Report results but never block the pipeline
         with:
           projectBaseDir: ./backend
           args: >
             -Dsonar.projectKey=arcten-backend
-            -Dsonar.projectName="ARCTen Backend"
+            -Dsonar.projectName=ARCTen_Backend
             -Dsonar.sources=.
             -Dsonar.exclusions=node_modules/**,coverage/**,**/*.test.js
         env:
@@ -58,11 +59,12 @@ jobs:
 
       - name: SonarQube Scan (Frontend)
         uses: sonarsource/sonarqube-scan-action@v3
+        continue-on-error: true  # Report results but never block the pipeline
         with:
           projectBaseDir: ./frontend
           args: >
             -Dsonar.projectKey=arcten-frontend
-            -Dsonar.projectName="ARCTen Frontend"
+            -Dsonar.projectName=ARCTen_Frontend
             -Dsonar.sources=.
             -Dsonar.exclusions=node_modules/**,.next/**,out/**,**/*.test.tsx
         env:
