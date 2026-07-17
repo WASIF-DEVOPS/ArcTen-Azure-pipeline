@@ -1,6 +1,5 @@
 # ================================================================
 # ARCTen Data Pipeline (ETL Trigger)
-# Replaces: pipelines/data-pipeline.yml (Azure DevOps)
 # Triggers on: changes under data/
 # ================================================================
 
