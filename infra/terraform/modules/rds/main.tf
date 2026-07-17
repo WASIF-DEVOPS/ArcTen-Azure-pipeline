@@ -1,7 +1,6 @@
 # ============================================================
 # ARCTen — RDS Module (AWS)
 # Creates RDS SQL Server instance for Data Warehouse
-# Replaces: Azure SQL Database
 # ============================================================
 
 # ── Subnet Group ─────────────────────────────────────────────

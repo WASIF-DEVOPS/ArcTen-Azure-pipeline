@@ -1,7 +1,6 @@
 # ============================================================
 # ARCTen — Glue Module (AWS)
 # Creates Glue catalog database and ETL jobs
-# Replaces: Azure Data Factory
 # ============================================================
 
 # ── Glue Catalog Database ────────────────────────────────────

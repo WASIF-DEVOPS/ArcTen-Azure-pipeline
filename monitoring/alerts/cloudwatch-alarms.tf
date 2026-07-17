@@ -1,6 +1,5 @@
 # ============================================================
 # CloudWatch Alarm Rules (AWS)
-# Replaces: monitoring/alerts/azure-monitor-alerts.tf
 # Provisions alerts for EKS cluster, RDS, and DocumentDB
 # ============================================================
 

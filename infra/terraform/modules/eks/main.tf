@@ -1,7 +1,6 @@
 # ============================================================
 # ARCTen — EKS Module (AWS)
 # Creates EKS cluster and managed node group
-# Replaces: Azure AKS module
 # ============================================================
 
 # ── EKS Cluster Security Group ───────────────────────────────

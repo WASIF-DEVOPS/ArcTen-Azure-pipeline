@@ -1,7 +1,6 @@
 # ============================================================
 # ARCTen — S3 Module (AWS)
 # Creates S3 bucket for Data Lake storage
-# Replaces: Azure Storage Account (ADLS Gen2)
 # ============================================================
 
 resource "aws_s3_bucket" "datalake" {

@@ -1,7 +1,6 @@
 # ============================================================
 # ARCTen — Secrets Manager Module (AWS)
 # Creates secrets for application credentials
-# Replaces: Azure Key Vault
 # ============================================================
 
 # ── Consolidated Bootstrap Secret (used by GitHub Actions pipeline) ──

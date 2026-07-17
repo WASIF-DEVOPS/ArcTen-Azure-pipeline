@@ -1,7 +1,6 @@
 # ============================================================
 # ARCTen — ECR Module (AWS)
 # Creates ECR repositories for container images
-# Replaces: Azure Container Registry (ACR)
 # ============================================================
 
 resource "aws_ecr_repository" "backend" {

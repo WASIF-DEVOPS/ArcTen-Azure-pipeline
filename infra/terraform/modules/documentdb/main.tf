@@ -1,7 +1,6 @@
 # ============================================================
 # ARCTen — DocumentDB Module (AWS)
 # Creates DocumentDB cluster (MongoDB-compatible)
-# Replaces: Azure Cosmos DB (MongoDB API)
 # ============================================================
 
 # ── Subnet Group ─────────────────────────────────────────────

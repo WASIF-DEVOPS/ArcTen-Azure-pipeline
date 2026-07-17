@@ -1,7 +1,6 @@
 # ============================================================
 # ARCTen — CloudWatch Module (AWS)
 # Creates log groups, metric alarms, and SNS topic for alerts
-# Replaces: Azure Monitor / Log Analytics
 # ============================================================
 
 # ── SNS Topic for Alerts ─────────────────────────────────────
