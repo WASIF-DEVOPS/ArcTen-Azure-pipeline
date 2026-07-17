@@ -81,7 +81,7 @@ ingress:
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
     nginx.ingress.kubernetes.io/use-regex: "true"
   hosts:
-    - host: chart-example.local
+    - host: arcten-leather.com.pk
       paths:
         - path: /api(/|$)(.*)
           pathType: Prefix
@@ -89,3 +89,4 @@ ingress:
         - path: /(.*)
           pathType: Prefix
           backend: frontend
+

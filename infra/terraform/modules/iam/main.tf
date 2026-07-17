@@ -126,3 +126,40 @@ resource "aws_iam_role_policy" "glue_s3_access" {
     ]
   })
 }
+
+# ── Route 53 Policy for EKS Nodes (ExternalDNS / DNS management) ──────
+resource "aws_iam_policy" "route53_access" {
+  name        = "${var.project}-route53-policy-${var.environment}"
+  description = "Allows EKS nodes to update Route 53 record sets"
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "route53:ChangeResourceRecordSets"
+        ]
+        Resource = [
+          "arn:aws:route53:::hostedzone/*"
+        ]
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "route53:ListHostedZones",
+          "route53:ListResourceRecordSets"
+        ]
+        Resource = [
+          "*"
+        ]
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "route53_access" {
+  policy_arn = aws_iam_policy.route53_access.arn
+  role       = aws_iam_role.eks_nodes.name
+}
+

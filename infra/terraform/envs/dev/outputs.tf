@@ -41,3 +41,14 @@ output "s3_datalake_bucket" {
   description = "S3 data lake bucket name"
   value       = module.s3.bucket_id
 }
+
+output "route53_zone_id" {
+  description = "Route 53 Hosted Zone ID"
+  value       = module.route53.zone_id
+}
+
+output "route53_name_servers" {
+  description = "Route 53 Nameservers to delegate in domain registrar"
+  value       = module.route53.name_servers
+}
+

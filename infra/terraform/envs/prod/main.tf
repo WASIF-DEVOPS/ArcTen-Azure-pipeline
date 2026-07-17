@@ -156,3 +156,13 @@ module "cloudwatch" {
   docdb_connections_threshold = 200
   tags                       = local.common_tags
 }
+
+# ── 11. Route 53 DNS ─────────────────────────────────────────
+module "route53" {
+  source      = "../../modules/route53"
+  project     = local.project
+  environment = local.environment
+  domain_name = var.domain_name
+  tags        = local.common_tags
+}
+
