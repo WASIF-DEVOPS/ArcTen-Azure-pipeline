@@ -457,73 +457,68 @@ infra/terraform/
 
 ---
 
-## 5. Repository Structure (Post-Migration)
+## 5. Repository Structure
 
 ```
 ArcTen/
-├── backend/                          ← Express.js API (NO CHANGE)
-├── frontend/                         ← Next.js 14 Portal (NO CHANGE)
+├── backend/                          ← Express.js API
+├── frontend/                         ← Next.js 14 Web Portal
 │
-├── docker/                           ← Dockerfiles (NO CHANGE)
+├── docker/                           ← Deployment Container configurations
 │   ├── backend.Dockerfile
 │   ├── frontend.Dockerfile
 │   └── docker-compose.yml
 │
-├── infra/terraform/                  ← Infrastructure as Code (REWRITTEN for AWS)
+├── infra/terraform/                  ← Infrastructure as Code (AWS provider)
 │   ├── modules/
-│   │   ├── vpc/                      ← NEW
-│   │   ├── iam/                      ← NEW
-│   │   ├── eks/                      ← Was: aks/
-│   │   ├── ecr/                      ← Was: acr/
-│   │   ├── documentdb/               ← Was: cosmosdb/
-│   │   ├── s3/                       ← Was: storage_account/
-│   │   ├── rds/                      ← Was: sql_database/
-│   │   ├── glue/                     ← Was: data_factory/
-│   │   ├── secrets_manager/          ← Was: key_vault/
-│   │   └── cloudwatch/               ← Was: monitor/
+│   │   ├── vpc/                      ← VPC Networking
+│   │   ├── iam/                      ← IAM Roles and Permissions
+│   │   ├── eks/                      ← EKS Cluster
+│   │   ├── ecr/                      ← Elastic Container Registry
+│   │   ├── documentdb/               ← DocumentDB (MongoDB)
+│   │   ├── s3/                       ← S3 Buckets
+│   │   ├── rds/                      ← RDS SQL Server
+│   │   ├── glue/                     ← AWS Glue ETL
+│   │   ├── secrets_manager/          ← AWS Secrets Manager
+│   │   └── cloudwatch/               ← CloudWatch Logging & Alarms
 │   └── envs/
-│       ├── dev/                      ← REWRITTEN (AWS provider + S3 backend)
-│       └── prod/                     ← REWRITTEN (AWS provider + S3 backend)
+│       ├── dev/                      ← Dev Env Workspace
+│       └── prod/                     ← Prod Env Workspace
 │
-├── helm/                             ← Helm Chart (MINOR UPDATE — ECR registry URL)
-│   ├── templates/                    ← NO CHANGE (K8s manifests are cloud-agnostic)
-│   ├── values.yaml                   ← Update: registry URL
+├── helm/                             ← Helm Deployment Configs
+│   ├── templates/
+│   ├── values.yaml
 │   ├── values-dev.yaml
 │   └── values-prod.yaml
 │
-├── .github/workflows/                ← NEW (Replaces pipelines/)
+├── .github/workflows/                ← GitHub Actions Pipelines
 │   ├── app-pipeline.yml              ← Build + Deploy (GitHub Actions)
 │   ├── infra-pipeline.yml            ← Terraform plan/apply
 │   └── data-pipeline.yml             ← Data ETL trigger
 │
-├── pipelines/                        ← DEPRECATED (Azure DevOps — to be removed)
-│
 ├── data/                             ← Data Engineering Layer
-│   ├── ingestion/                    ← REWRITTEN (boto3 instead of Azure SDK)
+│   ├── ingestion/                    ← Python Data Ingestion Scripts
 │   │   ├── export-quotes-to-lake.py
 │   │   ├── export-products-to-lake.py
 │   │   └── requirements.txt
-│   ├── glue-jobs/                    ← NEW (Replaces adf-pipelines/)
+│   ├── glue-jobs/                    ← AWS Glue ETL Job Scripts
 │   │   ├── glue_docdb_to_rds.py
 │   │   └── glue_s3_to_rds.py
-│   ├── adf-pipelines/                ← DEPRECATED (Azure Data Factory — to be removed)
-│   ├── databricks/                   ← UPDATED (S3 mount instead of ABFSS)
-│   └── processing/sql/               ← NO CHANGE (SQL is SQL)
+│   ├── databricks/                   ← Databricks Configs
+│   └── processing/sql/               ← Warehouse SQL Star Schema DDL/Views
 │
 ├── monitoring/                       ← Observability
-│   ├── prometheus/                   ← NO CHANGE
-│   ├── grafana/dashboards/           ← NO CHANGE
+│   ├── prometheus/                   ← In-cluster Prometheus metrics values
+│   ├── grafana/dashboards/           ← Grafana custom dashboards
 │   └── alerts/
-│       └── cloudwatch-alarms.tf      ← REWRITTEN (was azure-monitor-alerts.tf)
+│       └── cloudwatch-alarms.tf      ← CloudWatch Infrastructure alerts
 │
-├── powerbi/                          ← UPDATED (RDS connection instead of Azure SQL)
+├── powerbi/                          ← Power BI reporting instructions
 │
-└── docs/                             ← UPDATED (all Azure refs → AWS)
-    ├── pr.md                         ← NEW — Project Requirements
-    ├── architecture.md               ← NEW — This document
-    ├── setup-guide.md                ← REWRITTEN for AWS
-    ├── interview-talking-points.md   ← UPDATED for AWS context
-    └── resume-bullets.md             ← UPDATED with AWS service names
+└── docs/                             ← Documentation
+    ├── pr.md                         ← Platform Requirements
+    ├── architecture.md               ← This document
+    └── setup-guide.md                ← Setup & Deployment instructions
 ```
 
 ---
@@ -568,43 +563,39 @@ ArcTen/
 
 ---
 
-## 7. Cost Comparison (Estimated Monthly)
+## 7. Cost Estimation (Estimated Monthly)
 
-| Resource | Azure (Current) | AWS (Equivalent) | Est. Monthly Cost (Dev) | Est. Monthly Cost (Prod) |
-|----------|----------------|-----------------|------------------------|------------------------|
-| Kubernetes | AKS (free control plane) | EKS ($73 control plane) | ~$150 | ~$350 |
-| Worker Nodes | 2× Standard_B2s | 2× t3.medium | ~$60 | ~$240 |
-| Container Registry | ACR Basic | ECR (pay per use) | ~$5 | ~$15 |
-| Document DB | Cosmos DB (400 RU/s) | DocumentDB (db.t3.medium) | ~$58 | ~$400 |
-| Data Lake | ADLS Gen2 | S3 Standard | ~$2 | ~$10 |
-| SQL Warehouse | Azure SQL S0 | RDS SQL Server Express | ~$15 | ~$200 |
-| ETL | ADF (pay per run) | Glue (pay per DPU-hour) | ~$5 | ~$20 |
-| Secrets | Key Vault (per secret) | Secrets Manager ($0.40/secret/mo) | ~$2 | ~$2 |
-| Monitoring | Azure Monitor (included) | CloudWatch ($3/alarm) | ~$10 | ~$30 |
-| **TOTAL** | | | **~$307/mo** | **~$1,267/mo** |
+| Resource | AWS Resource Type | Est. Monthly Cost (Dev) | Est. Monthly Cost (Prod) |
+|----------|-------------------|------------------------|------------------------|
+| Kubernetes Control Plane | Amazon EKS | ~$73 | ~$73 |
+| EKS Worker Nodes | EC2 Instances (t3.micro / t3.large) | ~$30 (2 nodes) | ~$240 (4 nodes) |
+| Container Registry | Amazon ECR | ~$2 | ~$15 |
+| Document Database | In-Cluster MongoDB (Dev) / DocumentDB (Prod) | $0.00 | ~$400 |
+| Data Lake Storage | Amazon S3 | ~$2 | ~$10 |
+| Relational Warehouse | RDS SQL Server Express | ~$15 | ~$200 |
+| ETL Ingestion | GitHub Actions Runner (Dev) / Glue (Prod) | $0.00 | ~$20 |
+| Secret Management | AWS Secrets Manager | ~$2 | ~$2 |
+| Monitoring | CloudWatch Metric Alarms | ~$10 | ~$30 |
+| **TOTAL** | | **~$134/mo** | **~$990/mo** |
 
 > These are estimates — actual costs depend on usage patterns and reserved instances.
 
 ---
 
-## 8. Migration Execution Order
+## 8. Deployment Execution Order
 
 ```
-Phase 1 ──► Terraform Modules        (Foundation — everything depends on this)
+Phase 1 ──► Terraform Modules        (Core networking & IAM infrastructure)
     │
-Phase 2 ──► Terraform Environments   (Wire up modules for dev/prod)
+Phase 2 ──► Terraform Environments   (Initialize dev and prod workspaces)
     │
-Phase 3 ──► CI/CD Pipelines          (Automate builds + deployments)
+Phase 3 ──► CI/CD Pipeline Setup     (Configure GitHub Actions workflow)
     │
-Phase 4 ──► Data Ingestion Scripts   (Update Python SDK)
+Phase 4 ──► Data Ingestion Scripts   (Deploy ingestion scripts)
     │
-Phase 5 ──► ETL Pipelines            (Replace ADF with Glue)
+Phase 5 ──► ETL Pipeline Ingestion   (Load datalake state to RDS)
     │
-Phase 6 ──► Monitoring Alerts        (CloudWatch alarms)
+Phase 6 ──► Monitoring Alarms        (Provision CloudWatch alarms)
     │
-Phase 7 ──► Helm Values              (ECR registry URL)
-    │
-Phase 8 ──► Databricks Docs          (S3 mount)
-    │
-Phase 9 ──► Documentation            (All references updated)
+Phase 7 ──► Application Deploy       (Execute Helm upgrade to EKS)
 ```

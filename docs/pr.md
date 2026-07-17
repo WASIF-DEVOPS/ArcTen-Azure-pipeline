@@ -1,29 +1,26 @@
-# 📋 ARCTen — Project Requirements Document (AWS Migration)
+# 📋 ARCTen — Project Requirements Document (AWS Platform)
 
 > **Project**: ARCTen B2B Leather Manufacturing Cloud Data Platform  
-> **Version**: 2.0 — AWS Migration  
+> **Version**: 1.0 — AWS Native  
 > **Date**: July 2026  
-> **Previous Platform**: Microsoft Azure  
-> **Target Platform**: Amazon Web Services (AWS)
 
 ---
 
 ## 1. Project Overview
 
 ### 1.1 Background
-ARCTen is a B2B leather manufacturing company that produces leather jackets (men's & women's) and leather bags for wholesale buyers. The company currently operates a cloud-native e-commerce and data analytics platform built entirely on Microsoft Azure.
+ARCTen is a B2B leather manufacturing company that produces leather jackets (men's & women's) and leather bags for wholesale buyers. The company operates a cloud-native e-commerce and data analytics platform built entirely on Amazon Web Services (AWS).
 
-### 1.2 Migration Objective
-The client has requested a **complete cloud migration from Azure to AWS** while maintaining all existing business functionality, application behavior, and operational standards.
+### 1.2 Platform Objective
+The system is designed and built natively on AWS to run the B2B catalog, manage quote pipelines, orchestrate ETL jobs, and serve business metrics seamlessly while maintaining high operational and security standards.
 
 ### 1.3 Success Criteria
-- Zero downtime for the application during migration
-- All existing features work identically on AWS
-- Infrastructure provisioned through Terraform (IaC)
-- CI/CD pipelines fully automated on the new platform
+- High availability for the B2B application
+- Infrastructure provisioned entirely through Terraform (IaC)
+- CI/CD pipelines fully automated via GitHub Actions
 - Data pipeline (ETL → Warehouse → BI) operational on AWS services
-- Monitoring & alerting equivalent to current setup
-- Security posture maintained (no hardcoded credentials)
+- Comprehensive CloudWatch and Prometheus/Grafana monitoring
+- Strong security posture (zero credentials in source code)
 
 ---
 
@@ -72,62 +69,62 @@ The client has requested a **complete cloud migration from Azure to AWS** while 
 
 ### 3.1 Compute & Container Orchestration
 
-| ID | Requirement | Azure (Current) | AWS (Target) | Priority |
-|----|------------|-----------------|-------------|----------|
-| IR-01 | Managed Kubernetes cluster with dev/prod namespaces | AKS | **Amazon EKS** | P0 |
-| IR-02 | Private container image registry | ACR | **Amazon ECR** | P0 |
-| IR-03 | Auto-scaling (HPA) — 1→5 pods at 70% CPU | AKS HPA | **EKS HPA** (same K8s-native) | P0 |
-| IR-04 | Ingress controller (NGINX) with path-based routing | AKS + NGINX | **EKS + NGINX** (or AWS ALB) | P0 |
-| IR-05 | Network isolation — VPC with public/private subnets | Azure VNET (implicit) | **AWS VPC** (explicit — NEW) | P0 |
-| IR-06 | IAM roles for Kubernetes service accounts | Azure Managed Identity | **IAM Roles for Service Accounts (IRSA)** — NEW | P0 |
+| ID | Requirement | AWS Service / Tool | Priority |
+|----|------------|--------------------|----------|
+| IR-01 | Managed Kubernetes cluster with dev/prod namespaces | **Amazon EKS** | P0 |
+| IR-02 | Private container image registry | **Amazon ECR** | P0 |
+| IR-03 | Auto-scaling (HPA) — 1→5 pods at 70% CPU | **EKS Horizontal Pod Autoscaling** | P0 |
+| IR-04 | Ingress controller (NGINX) with path-based routing | **EKS + NGINX Ingress Controller** | P0 |
+| IR-05 | Network isolation — VPC with public/private subnets | **AWS VPC** (Multi-AZ subnets) | P0 |
+| IR-06 | IAM roles for Kubernetes service accounts | **IAM Roles for Service Accounts (IRSA)** | P0 |
 
 ### 3.2 Database & Storage
 
-| ID | Requirement | Azure (Current) | AWS (Target) | Priority |
-|----|------------|-----------------|-------------|----------|
-| IR-07 | MongoDB-compatible document database for app data | Cosmos DB (MongoDB API) | **Amazon DocumentDB** | P0 |
-| IR-08 | Data Lake storage (raw zone for ETL) | ADLS Gen2 | **Amazon S3** | P0 |
-| IR-09 | SQL Data Warehouse for analytics (star schema) | Azure SQL Database | **Amazon RDS (SQL Server)** | P0 |
+| ID | Requirement | AWS Service / Tool | Priority |
+|----|------------|--------------------|----------|
+| IR-07 | MongoDB-compatible document database for app data | **Amazon DocumentDB** (Prod) / In-Cluster MongoDB (Dev) | P0 |
+| IR-08 | Data Lake storage (raw zone for ETL) | **Amazon S3** | P0 |
+| IR-09 | SQL Data Warehouse for analytics (star schema) | **Amazon RDS (SQL Server)** | P0 |
 
 ### 3.3 Data Engineering & ETL
 
-| ID | Requirement | Azure (Current) | AWS (Target) | Priority |
-|----|------------|-----------------|-------------|----------|
-| IR-10 | ETL orchestration service | Azure Data Factory | **AWS Glue** | P1 |
-| IR-11 | Python ingestion scripts (Cosmos/DocDB → Data Lake) | Azure ADLS SDK | **boto3 S3 SDK** | P1 |
-| IR-12 | Optional PySpark transformation layer | Azure Databricks | **AWS Databricks / EMR** | P2 |
+| ID | Requirement | AWS Service / Tool | Priority |
+|----|------------|--------------------|----------|
+| IR-10 | ETL orchestration service | **AWS Glue** / GitHub Actions Runner | P1 |
+| IR-11 | Python ingestion scripts (App DB → Data Lake) | **Python boto3 S3 SDK** | P1 |
+| IR-12 | Optional PySpark transformation layer | **AWS Glue PySpark** | P2 |
 
 ### 3.4 Security & Secrets
 
-| ID | Requirement | Azure (Current) | AWS (Target) | Priority |
-|----|------------|-----------------|-------------|----------|
-| IR-13 | Centralized secrets management (DB URIs, JWT secrets, admin creds) | Azure Key Vault | **AWS Secrets Manager** | P0 |
-| IR-14 | No credentials in source code or Docker images | ✅ Enforced | **Must maintain** | P0 |
-| IR-15 | Terraform state stored remotely with locking | Azure Blob + Lease Lock | **S3 + DynamoDB Lock Table** | P0 |
+| ID | Requirement | AWS Service / Tool | Priority |
+|----|------------|--------------------|----------|
+| IR-13 | Centralized secrets management (DB URIs, JWT, admin creds) | **AWS Secrets Manager** | P0 |
+| IR-14 | No credentials in source code or Docker images | **Zero-Git Secrets Policy** | P0 |
+| IR-15 | Terraform state stored remotely with locking | **S3 + DynamoDB State Lock Table** | P0 |
 
 ### 3.5 Monitoring & Observability
 
-| ID | Requirement | Azure (Current) | AWS (Target) | Priority |
-|----|------------|-----------------|-------------|----------|
-| IR-16 | Metrics collection (CPU, memory, pod health) | Prometheus (in-cluster) | **Prometheus (in-cluster)** — No change | P0 |
-| IR-17 | Dashboard visualization | Grafana (in-cluster) | **Grafana (in-cluster)** — No change | P0 |
-| IR-18 | Cloud-native metric alerts (node CPU, DB usage) | Azure Monitor Alerts | **CloudWatch Alarms + SNS** | P1 |
-| IR-19 | Centralized log aggregation | Azure Log Analytics | **CloudWatch Logs** | P1 |
+| ID | Requirement | AWS Service / Tool | Priority |
+|----|------------|--------------------|----------|
+| IR-16 | Metrics collection (CPU, memory, pod health) | **Prometheus (in-cluster)** | P0 |
+| IR-17 | Dashboard visualization | **Grafana (in-cluster)** | P0 |
+| IR-18 | Cloud-native metric alerts (node CPU, DB usage) | **CloudWatch Alarms + SNS** | P1 |
+| IR-19 | Centralized log aggregation | **CloudWatch Logs** | P1 |
 
 ---
 
 ## 4. CI/CD Pipeline Requirements
 
-| ID | Requirement | Azure (Current) | AWS (Target) | Priority |
-|----|------------|-----------------|-------------|----------|
-| CI-01 | Auto-trigger on code push to `main` / `develop` | Azure DevOps trigger | **GitHub Actions trigger** | P0 |
-| CI-02 | Build Docker images (multi-stage) for frontend + backend | Docker@2 task | **docker/build-push-action** | P0 |
-| CI-03 | Push images to container registry | Push to ACR | **Push to ECR** | P0 |
-| CI-04 | Deploy to dev namespace on `develop` branch | HelmDeploy to dev-ns | **Helm upgrade to dev-ns via kubectl** | P0 |
-| CI-05 | Deploy to prod namespace on `main` branch | HelmDeploy to prod-ns | **Helm upgrade to prod-ns via kubectl** | P0 |
-| CI-06 | Manual approval gate before production deployment | Azure DevOps Environment gate | **GitHub Environment with required reviewers** | P0 |
-| CI-07 | Infrastructure pipeline (Terraform plan/apply) | Azure DevOps (empty) | **GitHub Actions with Terraform** | P1 |
-| CI-08 | Data pipeline trigger | Azure DevOps (empty) | **GitHub Actions** | P2 |
+| ID | Requirement | AWS Service / Tool | Priority |
+|----|------------|--------------------|----------|
+| CI-01 | Auto-trigger on code push to `main` / `develop` | **GitHub Actions Triggers** | P0 |
+| CI-02 | Build Docker images (multi-stage) for frontend + backend | **GitHub Actions docker/build-push** | P0 |
+| CI-03 | Push images to container registry | **GitHub Actions Amazon ECR Upload** | P0 |
+| CI-04 | Deploy to dev namespace on `develop` branch | **Helm Upgrade to EKS Dev Namespace** | P0 |
+| CI-05 | Deploy to prod namespace on `main` branch | **Helm Upgrade to EKS Prod Namespace** | P0 |
+| CI-06 | Manual approval gate before production deployment | **GitHub Environments with Required Reviewers** | P0 |
+| CI-07 | Infrastructure pipeline (Terraform plan/apply) | **GitHub Actions workflows for Terraform** | P1 |
+| CI-08 | Data pipeline trigger | **GitHub Actions scheduler / workflows** | P2 |
 
 ---
 
@@ -135,10 +132,10 @@ The client has requested a **complete cloud migration from Azure to AWS** while 
 
 | ID | Requirement | Priority | Status |
 |----|------------|----------|--------|
-| DA-01 | Star schema warehouse: staging → dimensions → facts → views | P0 | ✅ SQL scripts exist — No change (using RDS SQL Server) |
-| DA-02 | 3 analytical views: `vw_quote_funnel`, `vw_monthly_pipeline`, `vw_product_demand` | P0 | ✅ SQL exists — No change |
-| DA-03 | Power BI dashboard connected to warehouse | P1 | 🟡 Connection config update (Azure SQL → RDS endpoint) |
-| DA-04 | 5 DAX KPIs: Total Quotes, Pipeline Value, Conversion Rate, Avg Lead Value, MoM Growth | P1 | ✅ DAX exists — No change |
+| DA-01 | Star schema warehouse: staging → dimensions → facts → views | P0 | ✅ SQL scripts run natively on RDS SQL Server |
+| DA-02 | 3 analytical views: `vw_quote_funnel`, `vw_monthly_pipeline`, `vw_product_demand` | P0 | ✅ SQL Views created in RDS |
+| DA-03 | Power BI dashboard connected to warehouse | P1 | 🟡 Connection configured directly to RDS endpoint |
+| DA-04 | 5 DAX KPIs: Total Quotes, Pipeline Value, Conversion Rate, Avg Lead Value, MoM Growth | P1 | ✅ DAX logic prepared |
 
 ---
 
@@ -183,7 +180,30 @@ The client has requested a **complete cloud migration from Azure to AWS** while 
 
 ---
 
-## 8. Constraints & Assumptions
+## 8. New Platform Requirements & Security Enhancements
+
+### 8.1 Production-Ready Public Access (Live Internet Access)
+| ID | Requirement | AWS Implementation | Priority | Status |
+|----|------------|--------------------|----------|--------|
+| PR-01 | **Public Exposure** — Expose EKS application to the public internet | AWS Network Load Balancer (NLB) provisioned automatically by NGINX Ingress Controller. | P0 | ✅ Implemented |
+| PR-02 | **No-Host Routing** — Access the application using raw Load Balancer DNS endpoints | Modified Helm `ingress.yaml` to make the `host` field optional, enabling wildcard routing for testing. | P0 | ✅ Implemented |
+
+### 8.2 Security Audit & Remediation Strategy
+| Security Focus | Risk Identified | Mitigation Strategy | Status |
+|----------------|-----------------|---------------------|--------|
+| In-Cluster Traffic | MongoDB/App traffic is unencrypted (HTTP) | Plan deployment of Linkerd/Istio Service Mesh for mTLS. | 📋 Strategy Created |
+| Perimeter Security | EKS API control plane open to `0.0.0.0/0` | Restrict security group CIDR access to developer IPs in Terraform. | 📋 Strategy Created |
+| Pipeline Gates | Vulnerabilities bypassed in CI/CD pipeline | Enforce `continue-on-error: false` for Trivy/SonarQube when code is clean. | 📋 Strategy Created |
+
+### 8.3 Observability Split Strategy
+| Observability Level | Tool Utilized | Target Metrics | Action / Alert Channel |
+|---------------------|---------------|----------------|-----------------------|
+| **Infrastructure** | AWS CloudWatch | EC2 CPU/RAM, RDS storage/connections, NAT bandwidth | AWS SNS email alerts to `admin@arcten.com` |
+| **Application** | Prometheus + Grafana | API request latency, HTTP 5xx error rate, pod health | Webhooks to developer Slack/Discord channels |
+
+---
+
+## 9. Constraints & Assumptions
 
 ### Constraints
 - Must use **Terraform** for all infrastructure provisioning (no CloudFormation)
@@ -199,7 +219,7 @@ The client has requested a **complete cloud migration from Azure to AWS** while 
 
 ---
 
-## 9. Deliverables Checklist
+## 10. Deliverables Checklist
 
 | # | Deliverable | Type |
 |---|-------------|------|
@@ -210,5 +230,6 @@ The client has requested a **complete cloud migration from Azure to AWS** while 
 | 5 | 2 AWS Glue ETL job scripts | Data Engineering |
 | 6 | CloudWatch alarm Terraform definitions | Monitoring |
 | 7 | Updated Helm values (ECR registry) | Kubernetes |
-| 8 | Updated documentation (README, setup guide, interview points, resume bullets) | Docs |
+| 8 | Updated documentation (README, setup guide, interview points, resume bullets, pr.md) | Docs |
 | 9 | Architecture diagram for AWS version | Docs |
+
