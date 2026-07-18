@@ -93,17 +93,16 @@ resource "aws_iam_openid_connect_provider" "eks" {
 }
 
 # ── EKS Addons ────────────────────────────────────────────────
-# depends_on ensures node group is ACTIVE before addon is installed.
-# Without this the addon enters DEGRADED state because no nodes are ready.
-resource "aws_eks_addon" "ebs_csi" {
-  cluster_name             = aws_eks_cluster.main.name
-  addon_name               = "aws-ebs-csi-driver"
-  resolve_conflicts_on_create = "OVERWRITE"
-  resolve_conflicts_on_update = "OVERWRITE"
+# NOTE: The aws-ebs-csi-driver addon is intentionally NOT managed by Terraform.
+# On t3.micro free-tier nodes, the Terraform addon resource always times out
+# (20m) because Docker image pulls are too slow on small instances.
+#
+# Install it MANUALLY after `terraform apply` completes:
+#   aws eks create-addon \
+#     --cluster-name arcten-eks-dev \
+#     --addon-name aws-ebs-csi-driver \
+#     --region us-east-1
+#
+# Then verify:
+#   kubectl get pods -n kube-system | grep ebs
 
-  depends_on = [aws_eks_node_group.main]
-
-  tags = merge(var.tags, {
-    Name = "${var.project}-eks-ebs-csi-${var.environment}"
-  })
-}
