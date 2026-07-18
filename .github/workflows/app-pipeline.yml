@@ -214,8 +214,9 @@ jobs:
 
       - name: Helm Deploy to Dev Namespace
         run: |
-          helm upgrade --install arcten ./helm \
+          helm upgrade --install arcten-dev ./helm \
             --namespace dev-ns \
+
             --create-namespace \
             -f helm/values-dev.yaml \
             --set imageCredentials.registry=${{ steps.ecr-login.outputs.registry }} \
