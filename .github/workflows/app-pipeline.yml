@@ -218,7 +218,6 @@ jobs:
             --namespace dev-ns \
             --create-namespace \
             -f helm/values-dev.yaml \
-
             --set imageCredentials.registry=${{ steps.ecr-login.outputs.registry }} \
             --set backend.image.tag=${{ needs.build.outputs.image_tag }} \
             --set frontend.image.tag=${{ needs.build.outputs.image_tag }} \
