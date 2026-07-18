@@ -53,7 +53,8 @@ resource "aws_eks_node_group" "main" {
   cluster_name    = aws_eks_cluster.main.name
   node_group_name = "${var.project}-nodes-${var.environment}"
   node_role_arn   = var.node_role_arn
-  subnet_ids      = var.private_subnet_ids
+  subnet_ids      = var.public_subnet_ids
+
 
   instance_types = [var.node_instance_type]
   capacity_type  = var.capacity_type

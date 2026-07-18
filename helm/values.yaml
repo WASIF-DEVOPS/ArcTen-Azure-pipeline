@@ -61,9 +61,10 @@ frontend:
 
 # ── Registry Configuration ───────────────────────────────────
 imageCredentials:
-  registry: 123456789012.dkr.ecr.us-east-1.amazonaws.com
+  registry: 311816465554.dkr.ecr.us-east-1.amazonaws.com
   username: ""
   password: ""
+
 
 # ── Database & Secrets Configuration ──────────────────────────
 secrets:
@@ -81,7 +82,7 @@ ingress:
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
     nginx.ingress.kubernetes.io/use-regex: "true"
   hosts:
-    - host: arcten-leather.com.pk
+    - host: arcten-leather.volo.pk
       paths:
         - path: /api(/|$)(.*)
           pathType: Prefix

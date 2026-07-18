@@ -24,5 +24,8 @@ spec:
           envFrom:
             - configMapRef:
                 name: {{ include "arcten.fullname" . }}-config
+          env:
+            - name: PORT
+              value: {{ .Values.frontend.port | quote }}
           resources:
             {{- toYaml .Values.frontend.resources | nindent 12 }}

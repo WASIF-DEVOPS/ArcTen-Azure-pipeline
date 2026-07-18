@@ -49,3 +49,8 @@ __pycache__/
 *.pyc
 .venv/
 
+# Temporary binaries and installers
+aws/
+awscliv2.zip
+kubectl
+

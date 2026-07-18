@@ -27,7 +27,7 @@ frontend:
 
 ingress:
   hosts:
-    - host: arcten-leather.com.pk
+    - host: arcten-leather.volo.pk
       paths:
         - path: /api(/|$)(.*)
           pathType: Prefix

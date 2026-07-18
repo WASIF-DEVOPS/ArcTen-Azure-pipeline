@@ -40,6 +40,6 @@ variable "admin_password" {
 variable "domain_name" {
   description = "The public domain name for Route 53"
   type        = string
-  default     = "arcten-leather.com.pk"
+  default     = "arcten-leather.volo.pk"
 }
 
