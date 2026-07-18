@@ -47,9 +47,10 @@ module "eks" {
   cluster_role_arn   = module.iam.eks_cluster_role_arn
   node_role_arn      = module.iam.eks_node_role_arn
 
-  # Dev sizing — small, cost-effective Free Tier nodes
+  # Dev sizing — t3.small gives 11 pods/node (t3.micro only allows 4 which
+  # is too few to fit system pods + EBS CSI controller + app pods)
   kubernetes_version = "1.31"
-  node_instance_type = "t3.micro"
+  node_instance_type = "t3.small"
   capacity_type      = "ON_DEMAND"
   node_desired_count = 2
   node_min_count     = 1
