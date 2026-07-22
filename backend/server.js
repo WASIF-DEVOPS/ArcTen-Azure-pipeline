@@ -6,18 +6,46 @@ const bcrypt = require('bcryptjs');
 const nodemailer = require('nodemailer');
 const ejs = require('ejs');
 const path = require('path');
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
+const mongoSanitize = require('express-mongo-sanitize');
 require('dotenv').config();
 
 const QuoteRequest = require('./models/QuoteRequest');
 
 const app = express();
 
-// Middleware
+// 1. Security Headers (Helmet)
+app.use(helmet());
+
+// 2. Prevent NoSQL Injection
+app.use(mongoSanitize());
+
+// 3. CORS Configuration (Removed unneeded ngrok origins)
 app.use(cors({
-  origin: [process.env.FRONTEND_URL,'http://localhost:3001','http://localhost:3000','https://phenomenologically-nontangental-les.ngrok-free.dev'],
+  origin: [process.env.FRONTEND_URL, 'http://localhost:3000', 'http://localhost:3001'].filter(Boolean),
   credentials: true,
 }));
+
 app.use(express.json());
+
+// 4. Rate Limiter for Login Endpoint (Max 10 requests per 15 minutes)
+const loginLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 10,
+  message: { success: false, message: 'Too many login attempts. Please try again after 15 minutes.' },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+// 5. Rate Limiter for Quote Submissions (Max 5 quote requests per hour)
+const quoteLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  max: 5,
+  message: { success: false, message: 'Quote request limit reached. Please try again later.' },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
 
 // MongoDB Connection
 mongoose.connect(process.env.MONGODB_URI)
@@ -28,7 +56,7 @@ mongoose.connect(process.env.MONGODB_URI)
 const transporter = nodemailer.createTransport({
   host: process.env.SMTP_HOST,
   port: process.env.SMTP_PORT,
-  secure: false,
+  secure: process.env.SMTP_PORT === '465',
   auth: {
     user: process.env.SMTP_USER,
     pass: process.env.SMTP_PASS,
@@ -79,8 +107,8 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
-// Admin Login
-app.post('/api/admin/login', async (req, res) => {
+// Admin Login Route (Protected with Rate Limiter & Bcrypt)
+app.post('/api/admin/login', loginLimiter, async (req, res) => {
   try {
     const { email, password } = req.body;
 
@@ -88,14 +116,18 @@ app.post('/api/admin/login', async (req, res) => {
       return res.status(401).json({ success: false, message: 'Invalid credentials' });
     }
 
-    if (password !== process.env.ADMIN_PASSWORD) {
+    const isMatch = process.env.ADMIN_PASSWORD_HASH 
+      ? await bcrypt.compare(password, process.env.ADMIN_PASSWORD_HASH)
+      : password === process.env.ADMIN_PASSWORD;
+
+    if (!isMatch) {
       return res.status(401).json({ success: false, message: 'Invalid credentials' });
     }
 
     const token = jwt.sign(
       { email, role: 'admin' },
       process.env.JWT_SECRET,
-      { expiresIn: '7d' }
+      { expiresIn: '24h' }
     );
 
     res.json({
@@ -114,8 +146,13 @@ app.get('/api/admin/verify', authMiddleware, (req, res) => {
   res.json({ success: true, admin: req.admin });
 });
 
-// Submit Quote Request (Public)
-app.post('/api/quote-request', async (req, res) => {
+// Helper function to safely escape regex special characters
+function escapeRegex(text) {
+  return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
+}
+
+// Submit Quote Request (Public - Rate Limited)
+app.post('/api/quote-request', quoteLimiter, async (req, res) => {
   try {
     const { companyName, email, phone, productInterest, estimatedQuantity, additionalNotes } = req.body;
 
@@ -162,30 +199,45 @@ app.post('/api/quote-request', async (req, res) => {
   }
 });
 
-// Get all quote requests (Admin - Protected)
+// Get all quote requests (Admin - Protected, Paginated, Escaped Regex)
 app.get('/api/admin/quotes', authMiddleware, async (req, res) => {
   try {
-    const { status, search } = req.query;
-    
+    const { status, search, page = 1, limit = 20 } = req.query;
     let query = {};
-    
+
     if (status && status !== 'all') {
       query.status = status;
     }
-    
+
     if (search) {
+      const safeSearch = escapeRegex(search);
       query.$or = [
-        { companyName: { $regex: search, $options: 'i' } },
-        // { email: { $regex: search, $options: 'i' } },
+        { companyName: { $regex: safeSearch, $options: 'i' } },
+        { email: { $regex: safeSearch, $options: 'i' } },
       ];
     }
 
-    const quotes = await QuoteRequest.find(query).sort({ createdAt: -1 });
-    
-    res.json({ 
-      success: true, 
+    const pageNum = parseInt(page, 10) || 1;
+    const limitNum = parseInt(limit, 10) || 20;
+    const skip = (pageNum - 1) * limitNum;
+
+    const [quotes, total] = await Promise.all([
+      QuoteRequest.find(query)
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limitNum),
+      QuoteRequest.countDocuments(query),
+    ]);
+
+    res.json({
+      success: true,
       data: quotes,
-      count: quotes.length,
+      pagination: {
+        total,
+        page: pageNum,
+        limit: limitNum,
+        totalPages: Math.ceil(total / limitNum),
+      },
     });
   } catch (error) {
     console.error('Get quotes error:', error);
@@ -254,26 +306,37 @@ app.delete('/api/admin/quotes/:id', authMiddleware, async (req, res) => {
   }
 });
 
-// Get quote stats (Admin - Protected)
+// Get quote stats (Admin - Protected, Single Aggregation Query)
 app.get('/api/admin/stats', authMiddleware, async (req, res) => {
   try {
+    const statsResult = await QuoteRequest.aggregate([
+      {
+        $group: {
+          _id: '$status',
+          count: { $sum: 1 },
+        },
+      },
+    ]);
+
     const total = await QuoteRequest.countDocuments();
-    const newCount = await QuoteRequest.countDocuments({ status: 'new' });
-    const contacted = await QuoteRequest.countDocuments({ status: 'contacted' });
-    const inProgress = await QuoteRequest.countDocuments({ status: 'in-progress' });
-    const quoted = await QuoteRequest.countDocuments({ status: 'quoted' });
-    const closed = await QuoteRequest.countDocuments({ status: 'closed' });
+    const statsMap = {
+      total,
+      new: 0,
+      contacted: 0,
+      'in-progress': 0,
+      quoted: 0,
+      closed: 0,
+    };
+
+    statsResult.forEach((item) => {
+      if (item._id && statsMap.hasOwnProperty(item._id)) {
+        statsMap[item._id] = item.count;
+      }
+    });
 
     res.json({
       success: true,
-      data: {
-        total,
-        new: newCount,
-        contacted,
-        'in-progress': inProgress,
-        quoted,
-        closed,
-      },
+      data: statsMap,
     });
   } catch (error) {
     console.error('Stats error:', error);
@@ -285,3 +348,4 @@ const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`ARCTen API running on port ${PORT}`);
 });
+
